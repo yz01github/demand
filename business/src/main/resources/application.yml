@@ -5,11 +5,11 @@ spring:
     password: root
     driverClassName: com.mysql.jdbc.Driver
   application:
-    name: provider-user
+    name: business
 
 server: 
   servlet: 
-    context-path: /user
+    context-path: /busi
   port: 8081
 
 logging:

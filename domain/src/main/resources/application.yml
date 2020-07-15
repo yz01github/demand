@@ -5,12 +5,12 @@ spring:
     password: root
     driverClassName: com.mysql.jdbc.Driver
   application:
-    name: provider-order
+    name: domain
 
 server: 
   port: 8071
   servlet:
-    context-path: /order
+    context-path: /domain
 
 logging:
   level:
