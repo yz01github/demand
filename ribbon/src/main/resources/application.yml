@@ -9,7 +9,7 @@ server:
 
 logging:
   level:
-    com.young : debug
+    com.west : debug
 
 eureka: 
   client: 
