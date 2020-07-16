@@ -22,7 +22,7 @@ public class RibbonConfig {
 	 * <p>Title: ribbonRule</p>  
 	 * <p>Description: [配置负载均衡算法]</p>  
 	 * @author youngZeu 
-	 * @param config
+	 * @param
 	 * @return
 	 */
 	@Bean

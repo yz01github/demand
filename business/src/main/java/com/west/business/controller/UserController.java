@@ -16,7 +16,7 @@ import com.west.business.entity.User;
 @RequestMapping("/peo")
 public class UserController {
 
-	@Autowired
+	/*@Autowired
 	private EurekaClient eurekaClient;
 	
 	@GetMapping("/{id}")
@@ -36,5 +36,5 @@ public class UserController {
 	public User getEntity(Long id, HttpServletRequest request) {
 		System.err.println(request.getServerName() + " port: " + request.getServerPort());
 		return new User(id);
-	}
+	}*/
 }

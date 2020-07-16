@@ -1,6 +1,4 @@
 spring:
-  profiles:
-    active: dev
   application:
     name: business
 
@@ -11,8 +9,7 @@ server:
 
 logging:
   level:
-    com.west : debug
-
+    com.west.business : debug
 
 #eureka:
 #  client:
