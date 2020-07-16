@@ -18,6 +18,6 @@ eureka:
   instance:
     prefer-ip-address: true # 在eureka页面显示ip
     
-PROVIDER-USER: 
+BUSINESS:
   ribbin: 
     NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule # 给指定服务配置负载算法

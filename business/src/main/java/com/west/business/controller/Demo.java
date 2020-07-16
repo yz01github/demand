@@ -9,6 +9,14 @@ import java.util.stream.Collectors;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Objects;
 import com.west.business.entity.User;
+import com.west.business.service.demo.DemoService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * <p>Title: Demo</p>  
@@ -16,8 +24,18 @@ import com.west.business.entity.User;
  * @author youngZeu  
  * created 2019年8月6日
  */
+@RestController
+@RequestMapping("/demo")
 public class Demo {
-	
+
+	@Autowired
+	private DemoService demoService;
+
+	@GetMapping("/{str}")
+	public String test(@PathVariable String str, HttpServletRequest request) {
+		return demoService.demoRequest(str + request.getRequestURI());
+	}
+
 	public void tree() {
 		List<User> list = new ArrayList<User>();
 		list.add(buildUser("s", "1", "0"));
