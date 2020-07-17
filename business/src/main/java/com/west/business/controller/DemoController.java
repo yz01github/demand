@@ -8,11 +8,17 @@ import java.util.stream.Collectors;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Objects;
-import com.west.business.entity.User;
 import com.west.business.service.demo.DemoService;
+import com.west.domain.entity.User;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,9 +30,10 @@ import javax.servlet.http.HttpServletRequest;
  * @author youngZeu  
  * created 2019年8月6日
  */
+@Api(tags = "接口Demo")
 @RestController
 @RequestMapping("/demo")
-public class Demo {
+public class DemoController {
 
 	@Autowired
 	private DemoService demoService;
@@ -35,6 +42,24 @@ public class Demo {
 	public String test(@PathVariable String str, HttpServletRequest request) {
 		return demoService.demoRequest(str + request.getRequestURI());
 	}
+
+
+//	@ApiImplicitParams({
+//			@ApiImplicitParam(name = "user", value = "信息", required = true,
+//					paramType = "body",
+//					dataType = "String",
+//					defaultValue = "")
+//	})
+	@ApiOperation(value = "作用:接收多条数据", notes = "info备注")
+	@PostMapping("/info")
+	public String addUser(@RequestBody List<User> user) {
+		System.out.println(user.get(0).getDate().toLocaleString());
+		System.out.println(user);
+
+		return null;
+	}
+
+
 
 	public void tree() {
 		List<User> list = new ArrayList<User>();
@@ -55,7 +80,7 @@ public class Demo {
 			    .filter(s -> Objects.equal(o.getType(), s.getParentType()))
 			    .collect(Collectors.toList())
 			    .forEach(t -> {
-			    	List<User> sub = o.getSub() == null ? new ArrayList<User>() : o.getSub();
+			    	List<User> sub = o.getSub() == null ? new ArrayList<>() : o.getSub();
 			    	sub.add(t);
 			    	o.setSub(sub);
 			    });;

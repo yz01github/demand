@@ -1,6 +1,10 @@
 spring:
   application:
     name: business
+  ## 为了支持周报, 前台暂时还没写好, 先暂时用thymeleaf支撑一下, 等后面VUE项目OK了, 就删除掉
+  thymeleaf:
+    prefix: classpath:/htmls/
+
 
 server: 
   servlet: 
@@ -19,3 +23,4 @@ logging:
 #      enabled: true #使用health端点来代替心跳表明服务是否可用，反应到eureka server ui上服务的UP还是DOWN
 #  instance:
 #    prefer-ip-address: true # 在eureka页面显示ip
+

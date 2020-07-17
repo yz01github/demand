@@ -21,6 +21,12 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
+		<!-- html -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
@@ -34,24 +40,65 @@
 		</dependency>-->
 
 		<!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-eureka -->
-		<dependency>
+		<!--<dependency>
 		    <groupId>org.springframework.cloud</groupId>
 		    <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-		    <version>1.4.3.RELEASE</version><!--$NO-MVN-MAN-VER$-->
+		    <version>1.4.3.RELEASE</version>
+		</dependency>-->
+
+        <!-- sweagger2 -->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>${springfox-swagger2.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>${springfox-swagger2.version}</version>
+        </dependency>
+
+		<!-- easyPoi dependencies -->
+		<dependency>
+			<groupId>cn.afterturn</groupId>
+			<artifactId>easypoi-base</artifactId>
+			<version>${easypoi.base.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>cn.afterturn</groupId>
+			<artifactId>easypoi-annotation</artifactId>
+			<version>${easypoi.annotation.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>cn.afterturn</groupId>
+			<artifactId>easypoi-web</artifactId>
+			<version>${easypoi.web.version}</version>
 		</dependency>
 
+		<!-- mybatis plus -->
+		<dependency>
+			<groupId>com.baomidou</groupId>
+			<artifactId>mybatis-plus-boot-starter</artifactId>
+			<version>${mybaitsPlus.version}</version>
+		</dependency>
 
+		<!-- 其余项目模块 -->
+		<dependency>
+			<groupId>com.west</groupId>
+			<artifactId>domain</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 
-		<!-- 健康检查依赖 -->
+		<!-- 健康检查依赖
 		<dependency>
 		    <groupId>org.springframework.boot</groupId>
 		    <artifactId>spring-boot-starter-actuator</artifactId>
-		</dependency>
+		</dependency>-->
 		
-		<!-- hystrix依赖 -->
+		<!-- hystrix依赖
 		<dependency>
 		  <groupId>com.netflix.hystrix</groupId>
 		  <artifactId>hystrix-core</artifactId>
-		</dependency>
+		</dependency>-->
 	</dependencies>
 </project>
