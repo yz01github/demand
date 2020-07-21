@@ -3,6 +3,7 @@ package com.west.domain.dao;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.west.domain.entity.DemandInfo;
 import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Repository;
 
 /**
  * description: []

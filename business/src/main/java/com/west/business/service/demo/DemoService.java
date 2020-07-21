@@ -1,6 +1,10 @@
 package com.west.business.service.demo;
 
 
+import com.west.domain.entity.DemandInfo;
+
+import java.util.List;
+
 /**
  * description: []
  * title: IDemo
@@ -16,5 +20,7 @@ public interface DemoService {
     //@PostMapping(value = "/toUp")
     String demoRequest(String reqString);
 
+    int createDemand(DemandInfoVO demandInfo);
 
+    List<DemandInfo> exportExcel();
 }

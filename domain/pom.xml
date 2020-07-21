@@ -54,7 +54,7 @@
 			<version>${springfox-swagger2.version}</version>
 		</dependency>
 
-		<!-- druid
+		<!-- druid -->
 		<dependency>
 			<groupId>com.alibaba</groupId>
 			<artifactId>druid</artifactId>
@@ -65,7 +65,7 @@
 			<artifactId>druid-spring-boot-starter</artifactId>
 			<version>${druid.starter.version}</version>
 		</dependency>
- -->
+
 		<!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-eureka -->
 		<!-- 作为eureka客户端启动,暂时不能放开,否则启动会报错
 		<dependency>

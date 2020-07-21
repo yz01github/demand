@@ -1,10 +1,11 @@
 package com.west.domain.entity;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.west.domain.entity.base.BaseEntity;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 /**
  * description: []
@@ -13,52 +14,51 @@ import java.time.LocalDateTime;
  * @author <a href="mailto:yangzhi@asiainfo.com">yangzhi</a>
  * created 2020/7/17
  */
+@TableName(value = "TD_DMP_DEMAND")// resultMap="xml 中 resultMap 的 id"
 @Data
-public class DemandInfo {
+@EqualsAndHashCode(callSuper = false)
+public class DemandInfo extends BaseEntity {
 
     // 需求名称
     private String demandName;
 
+    // 涉及模块
+    private String relatedModules;
+
     // 需求提出时间
     private LocalDate demandTime;
 
-    // 需求提出月份
-    private String demandMonth;
+    // 要求完成时间
+    private LocalDate releaseTime;
 
-    // 需求归属人
+    // 开发负责人
     private String demandOwner;
-
-    // 需求派单人
-    private String appointSatff;
-
-    // 需求跟踪人
-    private String superVisor;
-
-    // 分析开始时间
-    private LocalDate analysisStartTime;
 
     // 分析完成时间
     private LocalDate analysisEndTime;
 
-    // 开发开始时间
-    private LocalDate devStartTime;
-
-    // 开发结束时间
+    // 开发完成时间
     private LocalDate devEndTime;
 
-    // 测试开始时间
-    private LocalDate testStartTime;
+    // 开发进度
+    private String devProgress;
 
-    // 测试结束时间
-    private LocalDate testEndTime;
+    // 是否上线,0否1是
+    private String isOver;
 
-    // 上线时间
-    private LocalDate releaseTime;
-
-    // 上线是否成功
+    // 上线是否成功,0否1是
     private String releaseSuccess;
+
+    // 失败原因
+    private String failedCause;
+
+    // 跟踪时间
+    private LocalDate trackTime;
 
     // 省份
     private String provName;
+
+    // 实际工作量
+    private String actualWork;
 
 }
