@@ -11,10 +11,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 /**
- * description: []
+ * description: [Http请求工具类]
  * title: HttpUtil
  *
- * @author <a href="mailto:yangzhi@asiainfo.com">yangzhi</a>
+ * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>
  * created 2020/7/17
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)

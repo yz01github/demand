@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
  * description: []
  * title: DemandInfoDao
  *
- * @author <a href="mailto:yangzhi@asiainfo.com">yangzhi</a>
+ * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>
  * created 2020/7/17
  */
 @Mapper

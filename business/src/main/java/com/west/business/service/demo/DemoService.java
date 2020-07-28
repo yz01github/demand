@@ -1,15 +1,11 @@
 package com.west.business.service.demo;
 
 
-import com.west.domain.entity.DemandInfo;
-
-import java.util.List;
-
 /**
  * description: []
  * title: IDemo
  *
- * @author <a href="mailto:yangzhi@asiainfo.com">yangzhi</a>
+ * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>
  * created 2020/7/16
  */
 //@FeignClient(name = "demo", url = "http://localhost:8071/domain")
@@ -20,7 +16,4 @@ public interface DemoService {
     //@PostMapping(value = "/toUp")
     String demoRequest(String reqString);
 
-    int createDemand(DemandInfoVO demandInfo);
-
-    List<DemandInfo> exportExcel();
 }

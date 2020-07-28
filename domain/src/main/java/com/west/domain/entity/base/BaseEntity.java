@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
  * description: [所有实体Bean的基类]
  * title: BaseEntity
  *
- * @author <a href="mailto:yangzhi@asiainfo.com">yangzhi</a>
+ * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>
  * created 2020/7/18
  */
 @Data
@@ -65,5 +65,5 @@ public class BaseEntity extends Model<BaseEntity> {
      */
     @TableLogic(value = "0", delval = "1")
     @TableField(value = "IS_DELETE",  fill = FieldFill.INSERT)
-    protected Integer isDelete;
+    protected Character isDelete;
 }

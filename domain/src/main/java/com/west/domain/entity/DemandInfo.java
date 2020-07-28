@@ -11,7 +11,7 @@ import java.time.LocalDate;
  * description: []
  * title: DemandInfo
  *
- * @author <a href="mailto:yangzhi@asiainfo.com">yangzhi</a>
+ * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>
  * created 2020/7/17
  */
 @TableName(value = "TD_DMP_DEMAND")// resultMap="xml 中 resultMap 的 id"
@@ -29,7 +29,7 @@ public class DemandInfo extends BaseEntity {
     private LocalDate demandTime;
 
     // 要求完成时间
-    private LocalDate releaseTime;
+    private String releaseTime;
 
     // 开发负责人
     private String demandOwner;

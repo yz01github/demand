@@ -11,7 +11,7 @@ import javax.sql.DataSource;
  * description: [德鲁伊连接池配置]
  * title: DBConfig
  *
- * @author <a href="mailto:yangzhi@asiainfo.com">yangzhi</a>
+ * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>
  * created 2020/7/16
  */
 @Configuration
