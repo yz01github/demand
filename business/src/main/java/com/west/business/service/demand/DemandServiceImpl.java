@@ -2,10 +2,13 @@ package com.west.business.service.demand;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.west.business.pojo.pub.convert.ConvertYN;
 import com.west.business.pojo.vo.demand.DemandInfoVO;
 import com.west.business.pojo.vo.demand.SearchDemandVO;
+import com.west.business.pojo.vo.demand.UpdateDemandVO;
 import com.west.business.pojo.vo.page.PageVO;
+import com.west.business.util.GeneratorUtil;
+import com.west.business.util.date.DateUtils;
 import com.west.domain.dao.DemandInfoDao;
 import com.west.domain.entity.DemandInfo;
 import org.apache.commons.lang3.StringUtils;
@@ -37,6 +40,7 @@ public class DemandServiceImpl implements DemandService {
     public int createDemand(DemandInfoVO demandInfo) {
         DemandInfo info = new DemandInfo();
         BeanUtils.copyProperties(demandInfo, info);
+        info.setDemandId(GeneratorUtil.getUUID());
         return demandInfoDao.insert(info);
     }
 
@@ -44,11 +48,7 @@ public class DemandServiceImpl implements DemandService {
     public IPage<DemandInfoVO> qryAll(SearchDemandVO searchVO, PageVO<DemandInfo> pageVO) {
         QueryWrapper<DemandInfo> wrapper = buildSearchWrapper(searchVO);
         IPage<DemandInfo> iPage = demandInfoDao.selectPage(pageVO.getPage(), wrapper);
-        return iPage.convert(o -> {
-            DemandInfoVO vo = new DemandInfoVO();
-            BeanUtils.copyProperties(o, vo);
-            return vo;
-        });
+        return iPage.convert(o -> o2VO(o));
     }
 
     @Override
@@ -65,17 +65,23 @@ public class DemandServiceImpl implements DemandService {
         if(CollectionUtils.isEmpty(infos)){
             return Collections.emptyList();
         }
-        return infos.stream().map(o -> {
-            DemandInfoVO vo = new DemandInfoVO();
-            BeanUtils.copyProperties(o, vo);
-            return vo;
-        }).collect(Collectors.toList());
+        return infos.stream().map(o -> o2VO(o)).collect(Collectors.toList());
+    }
+
+    private DemandInfoVO o2VO(DemandInfo o){
+        DemandInfoVO vo = new DemandInfoVO();
+        BeanUtils.copyProperties(o, vo);
+        vo.setIsOver(ConvertYN.convert(vo.getIsOver(),true));
+        vo.setReleaseSuccess(ConvertYN.convert(vo.getReleaseSuccess(),true));
+        return vo;
     }
 
     @Override
-    public List<DemandInfoVO> qryExcelData() {
+    public List<DemandInfoVO> qryExcelData(DemandInfoVO queryVO) {
+        String provName = queryVO.getProvName();
         QueryWrapper<DemandInfo> wrapper = new QueryWrapper<DemandInfo>()
-                .ge("CREATE_TIME", LocalDate.now());
+                .eq(StringUtils.isNotBlank(provName), "PROV_NAME", provName)
+                .ge("CREATE_TIME", DateUtils.getYesterday());
         return qry2VO(wrapper);
     }
 
@@ -89,11 +95,23 @@ public class DemandServiceImpl implements DemandService {
         String provName = searchVO.getProvName();
         LocalDate startTime = searchVO.getSearchStartTime();
         LocalDate endTime = searchVO.getSearchEndTime();
+        String demandOwner = searchVO.getDemandOwner();
         return new QueryWrapper<DemandInfo>()
                 .like(StringUtils.isNotBlank(demandName), "DEMAND_NAME", demandName)
                 .eq(StringUtils.isNotBlank(releaseSuccess), "RELEASE_SUCCESS", releaseSuccess)
+                .eq(StringUtils.isNotBlank(demandOwner), "DEMAND_OWNER", demandOwner)
                 .eq(StringUtils.isNotBlank(provName), "PROV_NAME", provName)
                 .ge(Objects.nonNull(startTime), "DEMAND_TIME", startTime)
                 .le(Objects.nonNull(endTime), "DEMAND_TIME", endTime);
+    }
+
+    @Override
+    public int updateDemand(UpdateDemandVO demandInfo) {
+        QueryWrapper<DemandInfo> wrapper = new QueryWrapper<DemandInfo>()
+                .eq("DEMAND_ID", demandInfo.getDemandId());
+        List<DemandInfo> infos = demandInfoDao.selectList(null);
+        DemandInfo info = new DemandInfo();
+        BeanUtils.copyProperties(demandInfo, info);
+        return demandInfoDao.update(info, wrapper);
     }
 }

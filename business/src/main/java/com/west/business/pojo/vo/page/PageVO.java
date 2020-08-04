@@ -18,6 +18,10 @@ public class PageVO<T> {
     private long pageSize;
 
     public Page getPage(){
+        if(pageNum == 0 && pageSize == 0){// 分页查询默认值
+            pageNum  = 1;
+            pageSize = 10;
+        }
         return new Page<T>(pageNum, pageSize);
     }
 }

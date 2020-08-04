@@ -1,0 +1,1 @@
+2020-08-03 17:47:38 [Thread-21] INFO  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Closing org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext@4604b900: startup date [Fri Jul 31 21:49:22 CST 2020]; parent: org.springframework.context.annotation.AnnotationConfigApplicationContext@6bc407fd

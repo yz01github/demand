@@ -4,6 +4,7 @@ spring:
     username: root
     password: root
     driverClassName: com.mysql.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
   application:
     name: domain
 
@@ -11,8 +12,6 @@ server:
   port: 8071
   servlet:
     context-path: /domain
-  profiles:
-    active: dev
 logging:
   level:
     com.west : debug
@@ -20,7 +19,7 @@ logging:
 mybatis-plus:
   mapper-locations: classpath:/mapper/*Mapper.xml
   #实体扫描，多个package用逗号或者分号分隔
-  typeAliasesPackage: com.youngzeu.mplus.entity
+  typeAliasesPackage: com.west.domain.entity
   global-config:
     db-config:
       id-type: auto

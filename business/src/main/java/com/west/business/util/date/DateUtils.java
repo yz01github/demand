@@ -3,6 +3,7 @@ package com.west.business.util.date;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
@@ -22,8 +23,23 @@ public class DateUtils {
     public static String getSysDate(){
         return LocalDateTime.now().format(FormatUtil.getDateFormat());
     }
-    void test(){
+
+    // 获取几天前日期
+    public static LocalDate dateAddDay(long days2Add){
+        return LocalDate.now().plusDays(days2Add);
+    }
+
+    public static LocalDate dateAddDay(LocalDate date, long days2Add){
+        return date.plusDays(days2Add);
+    }
+
+    // 获取昨天的LocalDate对象
+    public static LocalDate getYesterday(){
+        return LocalDate.now().plusDays(-1L);
+    }
+
+    /*void test(){
         System.out.println(getSysTime());
         System.out.println(getSysDate());
-    }
+    }*/
 }

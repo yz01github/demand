@@ -4,50 +4,42 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.west.domain.entity.base.BaseEntity;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import springfox.documentation.annotations.ApiIgnore;
 
 @Data
-@NoArgsConstructor
-public class User {
+@TableName(value = "TD_DMP_USER")
+@EqualsAndHashCode(callSuper = false)
+public class User extends BaseEntity {
 
-	@JsonIgnore
-	private Long id;
-	
-	/**
-	 * 创建时间
-	 */
+    // 用户唯一标识
+    private String userId;
 
-	@ApiModelProperty(value = "日期")
-	@DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
-	private Date date;
+    // 用户账号
+    private String userAccount;
 
-	@ApiModelProperty(value = "时间")
-	private LocalDateTime time;
+    // 用户密码
+    private String userPasswd;
 
-	@JsonIgnore
-	private String type;
+    // 用户姓名
+    private String userName;
 
-	@ApiModelProperty(value = "姓名", notes = "填写自己姓名")
-	private String name;
+    // salt
+    private String userSalt;
 
-	@JsonIgnore
-	private String parentType;
+    // 用户邮箱
+    private String userEmail;
 
-	@JsonIgnore
-	private List<User> sub;
+    // 用户部门编码
+    private String userDepart;
 
-	public User(Long id) {
-		this.id = id;
-		this.type = "user";
-		this.date = new Date();
-	}
-
-	
 }
+

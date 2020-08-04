@@ -19,6 +19,9 @@ import java.time.LocalDate;
 @EqualsAndHashCode(callSuper = false)
 public class DemandInfo extends BaseEntity {
 
+    // 需求唯一标识
+    private String DemandId;
+
     // 需求名称
     private String demandName;
 

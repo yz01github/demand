@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -30,7 +31,7 @@ import java.util.UUID;
 @RequestMapping("/user")
 public class UserController {
 
-    // @ApiIgnore
+    @ApiIgnore
     @PostMapping("/{str}")
     public void login(@PathVariable String userId, HttpServletRequest request, HttpServletResponse responce) {
         String loginKey = UUID.randomUUID().toString().replace("-", "l");
@@ -41,6 +42,7 @@ public class UserController {
         responce.addCookie(cookie);
     }
 
+    @ApiIgnore
     @GetMapping("/")
     public void testLogin(HttpServletRequest request, HttpServletResponse responce) {
         List<Cookie> cookies = Arrays.asList(request.getCookies());
@@ -60,5 +62,7 @@ public class UserController {
         }
 
     }
+
+
 
 }

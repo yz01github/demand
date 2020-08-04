@@ -4,8 +4,10 @@ import cn.afterturn.easypoi.excel.entity.ExportParams;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.google.common.base.Objects;
 import com.west.business.pojo.pub.ResResult;
+import com.west.business.pojo.pub.convert.ConvertYN;
 import com.west.business.pojo.vo.demand.DemandInfoVO;
 import com.west.business.pojo.vo.demand.SearchDemandVO;
+import com.west.business.pojo.vo.demand.UpdateDemandVO;
 import com.west.business.pojo.vo.page.PageVO;
 import com.west.business.service.demand.DemandService;
 import com.west.business.util.excel.ColorsStyle;
@@ -26,6 +28,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -61,8 +64,17 @@ public class DemandController {
     @PostMapping("/infos")
     @ResponseBody
     public ResResult<Integer> putInfo(/*@ModelAttribute*/ @RequestBody @Valid DemandInfoVO demandInfoVO) {
-        replaceValue(demandInfoVO);
         log.debug("demandInfoVO;{}", demandInfoVO);
+        replaceValue(demandInfoVO);
+        try{
+            long actualWork = Long.parseLong(demandInfoVO.getActualWork());
+            if(actualWork <=0 || actualWork > 100){
+                return ResResult.failAddMessage("录入失败,请输入正确的实际工作量(1-100的整数)!");
+            }
+        }catch (Exception e){
+            return ResResult.failAddMessage("录入失败,请输入正确的实际工作量(1-100的整数)!");
+        }
+
         int num = demandService.createDemand(demandInfoVO);
         if(num > 0){
             StringBuilder sb = new StringBuilder(demandInfoVO.getProvName()+"");
@@ -72,32 +84,48 @@ public class DemandController {
         return ResResult.failAddMessage("录入失败,请重新录入!");
     }
 
+    @ApiOperation(value="测试录入",notes="测试录入周报记录")
+    @PostMapping("/testCreate")
+    @ResponseBody
+    public ResResult<Integer> testCreate(@ModelAttribute @Valid DemandInfoVO demandInfoVO) {
+        return putInfo(demandInfoVO);
+    }
+
     private void replaceValue(DemandInfoVO demandInfoVO) {
-        if(StringUtils.isNotBlank(demandInfoVO.getIsOver())){
-            demandInfoVO.setIsOver(Objects.equal(demandInfoVO.getIsOver(), "是") ? "1" : "0");
-        }else{
-            demandInfoVO.setIsOver("");
-        }
-        if(StringUtils.isNotBlank(demandInfoVO.getReleaseSuccess())){
-            demandInfoVO.setReleaseSuccess(Objects.equal(demandInfoVO.getReleaseSuccess(), "是") ? "1" : "0");
-        }else{
-            demandInfoVO.setReleaseSuccess("");
-        }
+        demandInfoVO.setIsOver(ConvertYN.convert(demandInfoVO.getIsOver(),false));
+        demandInfoVO.setReleaseSuccess(ConvertYN.convert(demandInfoVO.getReleaseSuccess(),false));
     }
 
     @ResponseBody
     @ApiOperation(value="导出",notes="导出所有记录到Excel")
     @GetMapping("/file")
-    public void demand(HttpServletResponse response) throws IOException {
-        List<DemandInfoVO> collect = demandService.qryExcelData();
+    public void demand(SearchDemandVO searchVO, PageVO<DemandInfo> pageVO, HttpServletResponse response) throws IOException {
+        IPage<DemandInfoVO> iPage = demandService.qryAll(searchVO, pageVO);
+        List<DemandInfoVO> collect = iPage.getRecords();
+        ExportParams exportParams = getExportParams();
+        ExcelUtil.defaultExport(collect, DemandInfoVO.class, "fileNameYZ", response, exportParams);
+        log.debug("end...");
+    }
+
+    @ResponseBody
+    @ApiOperation(value="导出今日",notes="导出今天所有记录到Excel")
+    @GetMapping("/fileToday")
+    public void demand(DemandInfoVO queryVO, HttpServletResponse response) {
+        List<DemandInfoVO> collect = demandService.qryExcelData(queryVO);
+        ExportParams exportParams = getExportParams();
+        ExcelUtil.defaultExport(collect, DemandInfoVO.class, "fileNameYZ", response, exportParams);
+        log.debug("end...");
+    }
+
+    private ExportParams getExportParams(){
         ExportParams exportParams = new ExportParams();
         exportParams.setHeight((short) 7);
         exportParams.setTitleHeight((short)7);
         exportParams.setColor(HSSFColor.HSSFColorPredefined.LIGHT_TURQUOISE.getIndex());
         exportParams.setStyle(ColorsStyle.class);
-        ExcelUtil.defaultExport(collect, DemandInfoVO.class, "fileNameYZ", response, exportParams);
-        log.debug("end...");
+        return exportParams;
     }
+
 
     @ApiOperation(value="查询记录",notes="查询所有未逻辑删除的已有数据")
     @ApiImplicitParams({
@@ -137,6 +165,19 @@ public class DemandController {
         sb.append(infoVOs.size()).append("条周报;涵盖省份:").append(list).append(";具体记录详情查看下方数据.");
         result.setMessage(sb.toString());
         return result;
+    }
+
+    @ApiOperation(value="修改",notes="修改已录入的周报记录")
+    @PutMapping("/")
+    @ResponseBody
+    public ResResult<Integer> updateInfo(@RequestBody @Valid UpdateDemandVO demandInfoVO) {
+        if(StringUtils.isBlank(demandInfoVO.getDemandId())){
+            return ResResult.failAddMessage("更新失败,请输入需求唯一标识");
+        }
+        demandInfoVO.setIsOver(ConvertYN.convert(demandInfoVO.getIsOver(),false));
+        demandInfoVO.setReleaseSuccess(ConvertYN.convert(demandInfoVO.getReleaseSuccess(),false));
+        int num = demandService.updateDemand(demandInfoVO);
+        return ResResult.successAddData(num);
     }
 
 }
