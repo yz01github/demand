@@ -1,5 +1,7 @@
 package com.west.business.pojo.vo.user;
 
+import lombok.Data;
+
 /**
  * description: []
  * title: QueryUserVO
@@ -7,7 +9,11 @@ package com.west.business.pojo.vo.user;
  * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>
  * created 2020/7/30
  */
+@Data
 public class QueryUserVO {
+
+    // 用户账号
+    private String userId;
 
     // 用户账号
     private String userAccount;

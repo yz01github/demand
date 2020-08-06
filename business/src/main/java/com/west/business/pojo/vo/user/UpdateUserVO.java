@@ -12,17 +12,19 @@ import javax.validation.constraints.NotBlank;
  * created 2020/7/30
  */
 @Data
-public class CreateUserVO {
+public class UpdateUserVO {
+
+    // 用户唯一标识
+    @NotBlank
+    private String userId;
 
     // 用户账号
-    @NotBlank
     private String userAccount;
 
     // 用户密码
     private String userPasswd;
 
     // 用户姓名
-    @NotBlank
     private String userName;
 
     // 用户邮箱
