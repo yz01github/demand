@@ -1,0 +1,28 @@
+spring:
+  profiles:
+    active: dev
+  application:
+    name: business
+  # 前到后@DateTimeFormat 后到前@JsonFormat
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+
+
+server: 
+  servlet: 
+    context-path: /busi
+  port: 8081
+
+logging:
+  level:
+    com.west : debug
+
+
+#eureka:
+#  client:
+#    serviceUrl:
+#      defaultZone: http://user:123@127.0.0.1:10001/eureka/,http://user:123@127.0.0.1:10000/eureka/
+#    healthcheck: 
+#      enabled: true #使用health端点来代替心跳表明服务是否可用，反应到eureka server ui上服务的UP还是DOWN
+#  instance:
+#    prefer-ip-address: true # 在eureka页面显示ip

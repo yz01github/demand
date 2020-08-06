@@ -1,0 +1,55 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/demand?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&useSSL=false
+    username: root
+    password: root
+    driverClassName: com.mysql.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+  application:
+    name: domain
+
+server: 
+  port: 8071
+  servlet:
+    context-path: /domain
+logging:
+  level:
+    com.west : debug
+
+mybatis-plus:
+  mapper-locations: classpath:/mapper/*Mapper.xml
+  #实体扫描，多个package用逗号或者分号分隔
+  typeAliasesPackage: com.west.domain.entity
+  global-config:
+    db-config:
+      id-type: auto
+      capital-mode: true
+      db-type: mysql
+      field-strategy: NOT_NULL
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+#user:
+#  url: "http://localhost:8081/user/peo/"
+
+
+
+# 健康检查
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include:
+#        - refresh,health,info
+#eureka:
+#  client:
+#    serviceUrl:
+#      defaultZone: http://user:123@127.0.0.1:10000/eureka/
+#  instance:
+#    prefer-ip-address: true # 在eureka页面显示ip
+
+#mybatis:
+#  # 别名
+#  type-aliases-package: com.west.domain.entity

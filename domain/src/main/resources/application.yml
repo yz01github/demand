@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: domain
+  profiles:
+    active: dev
+server: 
+  port: 8071
+  servlet:
+    context-path: /domain
+
+logging:
+  level:
+    com.west : debug
+
+user: 
+  url: "http://localhost:8081/user/peo/"
+
+
+
+# 健康检查
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include:
+#        - refresh,health,info
+#eureka:
+#  client:
+#    serviceUrl:
+#      defaultZone: http://user:123@127.0.0.1:10000/eureka/
+#  instance:
+#    prefer-ip-address: true # 在eureka页面显示ip
+
+#mybatis:
+#  # 别名
+#  type-aliases-package: com.west.domain.entity
