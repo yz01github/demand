@@ -80,6 +80,7 @@ public class DemandInfoVO {
 
     // 是否上线,0否1是
     @Size(max = 1)
+    @NotBlank
     @ApiModelProperty(value = "是否上线,填写:是 or 否")
     @Excel(name = "是否上线", replace = {"否_0", "是_1"}, orderNum = "8")
     private String isOver;

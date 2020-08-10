@@ -5,6 +5,7 @@ import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * description: [查询VO]
@@ -84,4 +85,14 @@ public class SearchDemandVO extends DemandInfoVO {
     @ApiModelProperty(value = "查询日期(结束),格式:yyyy-MM-dd,例:2020-07-01,请勿省略日期中的0,下同")
     @DateTimeFormat(pattern="yyyy-MM-dd")
     private LocalDate searchEndTime;
+
+    // 需求提出时间
+    @ApiModelProperty(value = "录入日期(开始),格式:yyyy-MM-dd HH:mm:ss,例:2020-07-01 12:00:00,请勿省略日期中的0,下同")
+    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime searchInTimeStrat;
+
+    // 需求提出时间
+    @ApiModelProperty(value = "录入日期(结束),格式:yyyy-MM-dd HH:mm:ss,例:2020-07-01 12:00:00,请勿省略日期中的0,下同")
+    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime searchInTimeEnd;
 }

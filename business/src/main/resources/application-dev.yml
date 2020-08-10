@@ -1,8 +1,8 @@
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/demand?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&useSSL=false&serverTimezone=GMT%2b8
-    username: root
-    password: root
+    username: admin
+    password: 1qaz!QAZ
     driverClassName: com.mysql.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
     #dataSource Pool configuration; ip:port/busi/druid/datasource.html
@@ -31,8 +31,6 @@ spring:
 
 
 server: 
-  servlet: 
-    context-path: /busi
   port: 8081
 
 logging:

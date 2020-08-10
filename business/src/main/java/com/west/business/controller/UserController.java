@@ -4,12 +4,15 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.west.business.pojo.pub.ResResult;
 import com.west.business.pojo.vo.page.PageVO;
 import com.west.business.pojo.vo.user.CreateUserVO;
+import com.west.business.pojo.vo.user.LoginUserVO;
 import com.west.business.pojo.vo.user.QueryUserVO;
 import com.west.business.pojo.vo.user.UpdateUserVO;
 import com.west.business.service.user.UserService;
+import com.west.business.util.GeneratorUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,17 +24,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 
 /**
  * description: [用户相关接口]
@@ -46,39 +48,85 @@ import java.util.UUID;
 @RequestMapping("/user")
 public class UserController {
 
+    private int loginTTL = 60 * 60 * 30;
+
     @Autowired
     private UserService userService;
 
-    @ApiIgnore
-    @PostMapping("/{str}")
-    public void login(@PathVariable String userId, HttpServletRequest request, HttpServletResponse responce) {
-        String loginKey = UUID.randomUUID().toString().replace("-", "l");
-        request.getSession().setAttribute(userId+"_token", loginKey);
-        request.getSession().setAttribute("userId", userId);
-        Cookie cookie = new Cookie(userId+"_token", loginKey);
-        cookie.setMaxAge(60 * 60);// 1h 过期
-        responce.addCookie(cookie);
+    /**
+     * description: [ TODO 这个接口尚待完善,目前已知问题: 登录时产生了两个cookie_token, 另外,退出登录接口还没写]
+     * @param   userVO  登录信息
+     * @return  ResResult   登录结果;成功时返回用户相关信息
+     * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>
+     * created 2020/8/9
+     */
+    @PostMapping("/")
+    public ResResult login(@RequestBody LoginUserVO userVO, HttpServletRequest request, HttpServletResponse responce) {
+        // 1. 验证用户密码是否正确
+        LoginUserVO loginUserVO = userService.login(userVO);
+        boolean success = loginUserVO.isLoginSuccess();
+
+        // 处理 session,cookie,redis
+        if(success){
+            String token = GeneratorUtil.getUUID();
+            String userId = userVO.getUserId();
+            HttpSession session = request.getSession();
+            // 失效旧登录信息
+            Object oldUser = session.getAttribute("userId");
+            if(Objects.nonNull(oldUser)){
+                String oldUserId = oldUser.toString();
+                String oldUserToken = oldUserId+"_token";
+                session.setAttribute(oldUserToken, null);
+                Cookie[] cookies = request.getCookies();
+                if(Objects.nonNull(cookies)){
+                    Cookie cookie = Arrays.asList(cookies).stream()
+                            .filter(o -> Objects.equals(o.getName(), oldUserToken))
+                            .map(o -> {o.setValue(null);return o;})
+                            .findFirst()
+                            .orElse(new Cookie(oldUserToken, null));
+                    responce.addCookie(cookie);
+                }
+            }
+
+            // 新增登录信息
+            String userToken = userId+"_token";
+            request.getSession().setAttribute("userId", userId);
+            request.getSession().setAttribute(userToken, token);
+            Cookie cookie = new Cookie(userToken, token);
+            cookie.setMaxAge(loginTTL);// 单位:秒
+            responce.addCookie(cookie);
+            // TODO 后期要放在redis中, 每次有访问时,拦截器刷新该生命周期
+            return ResResult.successAddMessage(loginUserVO.getMessage());
+        }else{
+            return ResResult.failAddMessage(loginUserVO.getMessage());
+        }
+
     }
 
-    @ApiIgnore
     @GetMapping("/")
-    public void testLogin(HttpServletRequest request, HttpServletResponse responce) {
-        List<Cookie> cookies = Arrays.asList(request.getCookies());
-        if(CollectionUtils.isEmpty(cookies)){
+    public ResResult testLogin(HttpServletRequest request, HttpServletResponse responce) {
+        Cookie[] cookies = request.getCookies();
+        if(Objects.isNull(cookies)){
             log.debug("未登录,不允许该操作");
-            return;
+            return ResResult.successAddMessage("未登录,不允许该操作");
         }
-        Object userId = request.getSession().getAttribute("userId");
+        String userId = (String) request.getSession().getAttribute("userId");
+        if(StringUtils.isBlank(userId)){
+            return ResResult.successAddMessage("登录过期,请重新登录");
+        }
         String loginKey = userId+"_token";
         Object token = request.getSession().getAttribute(loginKey);
-        boolean isLogin = cookies.stream()
+        boolean isLogin = Arrays.asList(cookies).stream()
                 .anyMatch(c -> (loginKey.equals(c.getName()) && Objects.equals(c.getValue(), token)))
                 ;
         if(isLogin){
             // TODO 下面写业务
             log.debug("登陆成功");
         }
-
+        QueryUserVO userVO = new QueryUserVO();
+        userVO.setUserId(userId.toString());
+        List<QueryUserVO> queryUserVOS = userService.qryByCond(userVO);
+        return ResResult.successAddData(queryUserVOS.get(0));
     }
 
     @ApiOperation("新增用户接口")
@@ -116,11 +164,29 @@ public class UserController {
         return ResResult.successAddData(deleteNum);
     }
 
-    @ApiOperation("删除单个用户")
+    @ApiOperation("查询单个用户")
     @GetMapping("/one")
-    public ResResult<List<QueryUserVO>> searchByName(@NotBlank String name){
-        List<QueryUserVO> voList = userService.searchByName(name);
+    public ResResult<List<QueryUserVO>> searchByName(@NotBlank String name, HttpServletRequest request, HttpServletResponse response){
+        log.debug("当前是否登录:{}", testLogin(request, response));
+        log.debug("当前登录用户:{}", request.getSession().getAttribute("userName"));
+        QueryUserVO userVO = new QueryUserVO();
+        userVO.setUserName(name);
+        List<QueryUserVO> voList = userService.qryByCond(userVO);
         return ResResult.successAddData(voList);
     }
+
+    @ApiOperation("重置密码接口")
+    @PostMapping("/reset")
+    public ResResult resetPassword(@Valid CreateUserVO userVO){
+        boolean isSuccess = userService.resetPassword(userVO);
+        return ResResult.result(isSuccess);
+    }
+    @ApiOperation("一键重置所有用户密码接口,慎用!!!")
+    @PostMapping("/resetAll")
+    public ResResult<Boolean> resetPassword(){
+        boolean isSuccess = userService.resetAllPass();
+        return ResResult.result(isSuccess);
+    }
+
 
 }

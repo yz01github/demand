@@ -3,6 +3,7 @@ package com.west.business.service.user;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.west.business.pojo.vo.page.PageVO;
 import com.west.business.pojo.vo.user.CreateUserVO;
+import com.west.business.pojo.vo.user.LoginUserVO;
 import com.west.business.pojo.vo.user.QueryUserVO;
 import com.west.business.pojo.vo.user.UpdateUserVO;
 
@@ -23,8 +24,8 @@ public interface UserService {
     // 查询所有用户,分页
     IPage<QueryUserVO> qryAllPage(QueryUserVO userVO, PageVO<QueryUserVO> pageVO);
 
-    // 搜索单个用户
-    List<QueryUserVO> searchByName(String name);
+    // 查询所有用户,不分页
+    List<QueryUserVO> qryByCond(QueryUserVO userVO);
 
     // 更新用户信息
     int updateUser(UpdateUserVO userVO);
@@ -32,4 +33,10 @@ public interface UserService {
     int deleteUser(String userId);
 
     List<QueryUserVO> qryAll();
+
+    LoginUserVO login(LoginUserVO userVO);
+
+    boolean resetPassword(CreateUserVO userVO);
+
+    boolean resetAllPass();
 }
