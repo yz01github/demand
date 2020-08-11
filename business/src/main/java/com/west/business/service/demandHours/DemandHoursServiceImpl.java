@@ -16,6 +16,7 @@ import org.springframework.util.CollectionUtils;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -70,8 +71,12 @@ public class DemandHoursServiceImpl implements DemandHoursService{
     private QueryWrapper<DemandHours> buildSearchWrapper(SearchDemandHoursVO searchVO) {
         String demandName = searchVO.getDemandName();
         String provName = searchVO.getProvName();
+        LocalDate startTime = searchVO.getSearchStartTime();
+        LocalDate endTime = searchVO.getSearchEndTime();
         return new QueryWrapper<DemandHours>()
                 .like(StringUtils.isNotBlank(demandName), "DEMAND_NAME", demandName)
-                .eq(StringUtils.isNotBlank(provName), "PROV_NAME", provName);
+                .eq(StringUtils.isNotBlank(provName), "PROV_NAME", provName)
+                .ge(Objects.nonNull(startTime), "INPUT_TIME", startTime)
+                .le(Objects.nonNull(endTime), "INPUT_TIME", endTime);
     }
 }
