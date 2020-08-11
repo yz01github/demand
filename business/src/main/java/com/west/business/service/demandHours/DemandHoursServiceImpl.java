@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.west.business.pojo.vo.demandHours.CreateDemandHoursVO;
 import com.west.business.pojo.vo.demandHours.SearchDemandHoursVO;
+import com.west.business.pojo.vo.demandHours.UpdateDemandHoursVO;
 import com.west.business.pojo.vo.page.PageVO;
 import com.west.domain.dao.DemandHoursDao;
 import com.west.domain.entity.DemandHours;
@@ -47,6 +48,15 @@ public class DemandHoursServiceImpl implements DemandHoursService{
                 .eq("DEMAND_OWNER_ID", name)
                 .ge("CREATE_TIME", LocalDate.now());
         return qry2VO(wrapper);
+    }
+
+    @Override
+    public int updateDemandHours(UpdateDemandHoursVO updateDemandHoursInfo) {
+        QueryWrapper<DemandHours> wrapper = new QueryWrapper<DemandHours>().eq("ID", updateDemandHoursInfo.getId());
+        List<DemandHours> infos = demandHoursDao.selectList(null);
+        DemandHours info = new DemandHours();
+        BeanUtils.copyProperties(updateDemandHoursInfo, info);
+        return demandHoursDao.update(info, wrapper);
     }
 
     private List<CreateDemandHoursVO> qry2VO(QueryWrapper<DemandHours> wrapper){

@@ -6,11 +6,17 @@ import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Data
 public class SearchDemandHoursVO extends CreateDemandHoursVO{
 
+    //id
+    @NotNull
+    @ApiModelProperty(value = "ID")
+    @Excel(name = "ID",orderNum = "0", width = 35.0)
+    private Long id;
 
     // 需求名称
     @NotBlank

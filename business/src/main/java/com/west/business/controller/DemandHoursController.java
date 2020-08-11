@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.west.business.pojo.pub.ResResult;
 import com.west.business.pojo.vo.demandHours.CreateDemandHoursVO;
 import com.west.business.pojo.vo.demandHours.SearchDemandHoursVO;
+import com.west.business.pojo.vo.demandHours.UpdateDemandHoursVO;
 import com.west.business.pojo.vo.page.PageVO;
 import com.west.business.service.demandHours.DemandHoursService;
 import com.west.domain.entity.DemandHours;
@@ -85,5 +86,13 @@ public class DemandHoursController {
     public ResResult<IPage<CreateDemandHoursVO>> qryDemand(SearchDemandHoursVO searchVO, PageVO<DemandHours> pageVO) {
         IPage<CreateDemandHoursVO> iPage = demandHoursService.qryAll(searchVO, pageVO);
         return ResResult.successAddData(iPage);
+    }
+
+    @ApiOperation(value="修改",notes="修改已录入的工时信息")
+    @PutMapping("/updateDemandHours")
+    @ResponseBody
+    public ResResult<Integer> updateInfo(@RequestBody @Valid UpdateDemandHoursVO demandHoursVO) {
+        int num = demandHoursService.updateDemandHours(demandHoursVO);
+        return ResResult.successAddData(num);
     }
 }
