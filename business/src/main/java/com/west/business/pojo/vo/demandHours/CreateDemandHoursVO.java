@@ -13,7 +13,6 @@ public class CreateDemandHoursVO {
 
     //id
     @ApiModelProperty(value = "ID")
-    @Excel(name = "ID",orderNum = "0", width = 35.0)
     private Long id;
 
     // 需求名称
