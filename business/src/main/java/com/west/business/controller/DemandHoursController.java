@@ -29,11 +29,10 @@ public class DemandHoursController {
     private DemandHoursService demandHoursService;
 
 
-    @ApiOperation(value="录入",notes="录入周报记录")
+    @ApiOperation(value="录入",notes="录入工时信息")
     @PostMapping("/infos")
     @ResponseBody
     public ResResult<Integer> putInfo(/*@ModelAttribute*/ @RequestBody @Valid CreateDemandHoursVO createDemandHoursVO) {
-
         int num = demandHoursService.createDemandHours(createDemandHoursVO);
         if(num > 0){
             StringBuilder sb = new StringBuilder(createDemandHoursVO.getProvName()+"");
@@ -76,6 +75,10 @@ public class DemandHoursController {
                     paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "provName", value = "省份名", required = false,
                     paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "searchStartTime", value = "录入时间_开始条件,格式:yyyy-MM-dd,例:2020-07-01,请勿省略日期中的0,下同", required = false,
+                    paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "searchEndTime", value = "录入时间_结束条件,格式:yyyy-MM-dd", required = false,
+                    paramType = "query", dataType = "String")
     })
     @GetMapping("/all")
     @ResponseBody

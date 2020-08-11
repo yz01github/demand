@@ -77,4 +77,14 @@ public class SearchDemandHoursVO extends CreateDemandHoursVO{
     @DateTimeFormat(pattern="yyyy-MM-dd")
     @Excel(name = "修改时间", format = "yyyy-MM-dd", orderNum = "2", width = 15.0)
     private LocalDate updateTIME;
+
+    // 需求提出时间
+    @ApiModelProperty(value = "查询日期(开始),格式:yyyy-MM-dd,例:2020-07-01,请勿省略日期中的0,下同")
+    @DateTimeFormat(pattern="yyyy-MM-dd")
+    private LocalDate searchStartTime;
+
+    // 需求提出时间
+    @ApiModelProperty(value = "查询日期(结束),格式:yyyy-MM-dd,例:2020-07-01,请勿省略日期中的0,下同")
+    @DateTimeFormat(pattern="yyyy-MM-dd")
+    private LocalDate searchEndTime;
 }
