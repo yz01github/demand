@@ -1,6 +1,7 @@
 package com.west.business.service.demand;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.west.business.pojo.pub.convert.ConvertYN;
 import com.west.business.pojo.vo.demand.DemandInfoVO;
@@ -106,8 +107,8 @@ public class DemandServiceImpl implements DemandService {
                 .eq(StringUtils.isNotBlank(provName), "PROV_NAME", provName)
                 .ge(Objects.nonNull(startTime), "DEMAND_TIME", startTime)
                 .le(Objects.nonNull(endTime), "DEMAND_TIME", endTime)
-                .ge(Objects.nonNull(startTime), "CREATE_TIME", searchInTimeStrat)
-                .le(Objects.nonNull(endTime), "CREATE_TIME", searchInTimeEnd);
+                .ge(Objects.nonNull(searchInTimeStrat), "CREATE_TIME", searchInTimeStrat)
+                .le(Objects.nonNull(searchInTimeEnd), "CREATE_TIME", searchInTimeEnd);
     }
 
     @Override
@@ -118,5 +119,12 @@ public class DemandServiceImpl implements DemandService {
         DemandInfo info = new DemandInfo();
         BeanUtils.copyProperties(demandInfo, info);
         return demandInfoDao.update(info, wrapper);
+    }
+
+    @Override
+    public boolean deleteDemand(String demandId) {
+        UpdateWrapper<DemandInfo> wrapper = new UpdateWrapper<DemandInfo>()
+                .eq("DEMAND_ID", demandId);
+        return demandInfoDao.delete(wrapper) > 0;
     }
 }

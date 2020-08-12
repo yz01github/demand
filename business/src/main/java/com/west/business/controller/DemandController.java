@@ -25,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -202,4 +203,11 @@ public class DemandController {
         return ResResult.successAddData(num);
     }
 
+    @ApiOperation(value="删除",notes="删除已录入的周报记录")
+    @DeleteMapping("/{demandId}")
+    @ResponseBody
+    public ResResult<Integer> deleteInfo(@PathVariable("demandId") String demandId) {
+        boolean isSuccess = demandService.deleteDemand(demandId);
+        return ResResult.result(isSuccess);
+    }
 }
