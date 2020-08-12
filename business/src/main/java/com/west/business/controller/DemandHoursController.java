@@ -5,18 +5,24 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.west.business.pojo.pub.ResResult;
 import com.west.business.pojo.vo.demandHours.CreateDemandHoursVO;
 import com.west.business.pojo.vo.demandHours.SearchDemandHoursVO;
+import com.west.business.pojo.vo.demandHours.UpdateDemandHoursVO;
 import com.west.business.pojo.vo.page.PageVO;
+import com.west.business.pojo.vo.user.QueryUserVO;
 import com.west.business.service.demandHours.DemandHoursService;
+import com.west.business.service.user.UserService;
 import com.west.domain.entity.DemandHours;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Api(tags = "工时录入")
@@ -28,12 +34,13 @@ public class DemandHoursController {
     @Autowired
     private DemandHoursService demandHoursService;
 
+    @Autowired
+    private UserService userService;
 
-    @ApiOperation(value="录入",notes="录入周报记录")
+    @ApiOperation(value="录入",notes="录入工时信息")
     @PostMapping("/infos")
     @ResponseBody
     public ResResult<Integer> putInfo(/*@ModelAttribute*/ @RequestBody @Valid CreateDemandHoursVO createDemandHoursVO) {
-
         int num = demandHoursService.createDemandHours(createDemandHoursVO);
         if(num > 0){
             StringBuilder sb = new StringBuilder(createDemandHoursVO.getProvName()+"");
@@ -76,11 +83,44 @@ public class DemandHoursController {
                     paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "provName", value = "省份名", required = false,
                     paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "searchStartTime", value = "录入时间_开始条件,格式:yyyy-MM-dd,例:2020-07-01,请勿省略日期中的0,下同", required = false,
+                    paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "searchEndTime", value = "录入时间_结束条件,格式:yyyy-MM-dd", required = false,
+                    paramType = "query", dataType = "String")
     })
     @GetMapping("/all")
     @ResponseBody
     public ResResult<IPage<CreateDemandHoursVO>> qryDemand(SearchDemandHoursVO searchVO, PageVO<DemandHours> pageVO) {
         IPage<CreateDemandHoursVO> iPage = demandHoursService.qryAll(searchVO, pageVO);
+        if(null != iPage.getRecords() && !iPage.getRecords().isEmpty()){
+            Map<String, String> user = getUsers();
+            for(int i = 0; i < iPage.getRecords().size(); i++){
+                String userId = iPage.getRecords().get(i).getDemandOwnerId();
+                String userName = user.get(userId);
+                if(StringUtils.isNotBlank(userName)){
+                    iPage.getRecords().get(i).setDemandOwnerId(userName);
+                }
+            }
+        }
         return ResResult.successAddData(iPage);
+    }
+
+    private Map<String,String> getUsers(){
+        Map<String, String> users = new HashMap<String, String>();
+        List<QueryUserVO> userList = userService.qryAll();
+        if(null != userList && !userList.isEmpty()){
+            for(int i = 0; i < userList.size(); i++){
+                users.put(userList.get(i).getUserId(), userList.get(i).getUserName());
+            }
+        }
+        return users;
+    }
+
+    @ApiOperation(value="修改",notes="修改已录入的工时信息")
+    @PutMapping("/updateDemandHours")
+    @ResponseBody
+    public ResResult<Integer> updateInfo(@RequestBody @Valid UpdateDemandHoursVO demandHoursVO) {
+        int num = demandHoursService.updateDemandHours(demandHoursVO);
+        return ResResult.successAddData(num);
     }
 }

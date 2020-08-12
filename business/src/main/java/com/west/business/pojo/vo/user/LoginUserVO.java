@@ -3,32 +3,28 @@ package com.west.business.pojo.vo.user;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 
 /**
  * description: []
- * title: CreateUserVO
+ * title: LoginUserVO
  *
  * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>
- * created 2020/7/30
+ * created 2020/8/9
  */
 @Data
-public class CreateUserVO {
+public class LoginUserVO {
 
     // 用户账号
-    @Size(min = 4, max = 16)
+    @NotBlank
     private String userAccount;
 
     // 用户密码
+    @NotBlank
     private String userPasswd;
 
-    // 用户姓名
-    @NotBlank
-    private String userName;
+    private String userId;
 
-    // 用户邮箱
-    private String userEmail;
+    private boolean isLoginSuccess;
 
-    // 用户部门编码
-    private String userDepart;
+    private String message;
 }

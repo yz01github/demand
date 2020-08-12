@@ -1,5 +1,7 @@
 package com.west.business;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -19,5 +21,11 @@ public class BusinessApp{
 	
     public static void main(String[] args){
         SpringApplication.run(BusinessApp.class, args);
+    }
+
+    class test{
+        @Getter
+        @Setter
+        private String name = "default";
     }
 }

@@ -3,6 +3,7 @@ package com.west.business.controller;
 import cn.afterturn.easypoi.excel.entity.ExportParams;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.google.common.base.Objects;
+import com.west.business.consts.CommonConsts;
 import com.west.business.pojo.pub.ResResult;
 import com.west.business.pojo.pub.convert.ConvertYN;
 import com.west.business.pojo.vo.demand.DemandInfoVO;
@@ -24,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,7 +40,9 @@ import springfox.documentation.annotations.ApiIgnore;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -65,16 +69,35 @@ public class DemandController {
     @ResponseBody
     public ResResult<Integer> putInfo(/*@ModelAttribute*/ @RequestBody @Valid DemandInfoVO demandInfoVO) {
         log.debug("demandInfoVO;{}", demandInfoVO);
-        replaceValue(demandInfoVO);
+        String isOver = demandInfoVO.getIsOver();
+        List<String> viewYN = Arrays.asList(CommonConsts.VIEW_Y, CommonConsts.VIEW_N);
+        if(!viewYN.contains(isOver)){
+            return ResResult.failAddMessage("录入失败,请填写正确的\"是否上线\"数据;[是 or 否]!");
+        }
+        String releaseSuccess = demandInfoVO.getReleaseSuccess();
+        if(!viewYN.contains(releaseSuccess)){
+            return ResResult.failAddMessage("录入失败,请填写正确的\"上线是否成功\"数据;[是 or 否]!");
+        }
+        if(CommonConsts.VIEW_Y.equals(isOver) && !viewYN.contains(releaseSuccess)){
+            return ResResult.failAddMessage("上线后必须输入\"上线结果\"[是 or 否]!");
+        }
+        if(CommonConsts.VIEW_N.equals(isOver) && StringUtils.isNotBlank(releaseSuccess)){
+            return ResResult.failAddMessage("未上线不可输入\"上线结果\"数据");
+        }
         try{
             long actualWork = Long.parseLong(demandInfoVO.getActualWork());
+            long devProgress = Long.parseLong(demandInfoVO.getDevProgress());
             if(actualWork <=0 || actualWork > 100){
                 return ResResult.failAddMessage("录入失败,请输入正确的实际工作量(1-100的整数)!");
             }
+            if(devProgress <=0 || devProgress > 100){
+                return ResResult.failAddMessage("录入失败,请输入正确的开发进度(1-100的整数)!");
+            }
         }catch (Exception e){
-            return ResResult.failAddMessage("录入失败,请输入正确的实际工作量(1-100的整数)!");
+            return ResResult.failAddMessage("录入失败,请输入正确的开发进度/实际工作量(1-100的整数)!");
         }
-
+        // 校验 结束
+        replaceValue(demandInfoVO);
         int num = demandService.createDemand(demandInfoVO);
         if(num > 0){
             StringBuilder sb = new StringBuilder(demandInfoVO.getProvName()+"");
@@ -180,4 +203,11 @@ public class DemandController {
         return ResResult.successAddData(num);
     }
 
+    @ApiOperation(value="删除",notes="删除已录入的周报记录")
+    @DeleteMapping("/{demandId}")
+    @ResponseBody
+    public ResResult<Integer> deleteInfo(@PathVariable("demandId") String demandId) {
+        boolean isSuccess = demandService.deleteDemand(demandId);
+        return ResResult.result(isSuccess);
+    }
 }

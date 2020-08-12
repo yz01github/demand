@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.west.business.pojo.vo.demandHours.CreateDemandHoursVO;
 import com.west.business.pojo.vo.demandHours.SearchDemandHoursVO;
+import com.west.business.pojo.vo.demandHours.UpdateDemandHoursVO;
 import com.west.business.pojo.vo.page.PageVO;
 import com.west.domain.dao.DemandHoursDao;
 import com.west.domain.entity.DemandHours;
@@ -16,6 +17,7 @@ import org.springframework.util.CollectionUtils;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -48,6 +50,15 @@ public class DemandHoursServiceImpl implements DemandHoursService{
         return qry2VO(wrapper);
     }
 
+    @Override
+    public int updateDemandHours(UpdateDemandHoursVO updateDemandHoursInfo) {
+        QueryWrapper<DemandHours> wrapper = new QueryWrapper<DemandHours>().eq("ID", updateDemandHoursInfo.getId());
+        List<DemandHours> infos = demandHoursDao.selectList(null);
+        DemandHours info = new DemandHours();
+        BeanUtils.copyProperties(updateDemandHoursInfo, info);
+        return demandHoursDao.update(info, wrapper);
+    }
+
     private List<CreateDemandHoursVO> qry2VO(QueryWrapper<DemandHours> wrapper){
         List<DemandHours> infos = demandHoursDao.selectList(wrapper);
 
@@ -70,8 +81,12 @@ public class DemandHoursServiceImpl implements DemandHoursService{
     private QueryWrapper<DemandHours> buildSearchWrapper(SearchDemandHoursVO searchVO) {
         String demandName = searchVO.getDemandName();
         String provName = searchVO.getProvName();
+        LocalDate startTime = searchVO.getSearchStartTime();
+        LocalDate endTime = searchVO.getSearchEndTime();
         return new QueryWrapper<DemandHours>()
                 .like(StringUtils.isNotBlank(demandName), "DEMAND_NAME", demandName)
-                .eq(StringUtils.isNotBlank(provName), "PROV_NAME", provName);
+                .eq(StringUtils.isNotBlank(provName), "PROV_NAME", provName)
+                .ge(Objects.nonNull(startTime), "DEMAND_TIME", startTime)
+                .le(Objects.nonNull(endTime), "DEMAND_TIME", endTime);
     }
 }

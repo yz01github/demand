@@ -1,6 +1,7 @@
 package com.west.business.service.demand;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.west.business.pojo.pub.convert.ConvertYN;
 import com.west.business.pojo.vo.demand.DemandInfoVO;
@@ -19,6 +20,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -96,13 +98,17 @@ public class DemandServiceImpl implements DemandService {
         LocalDate startTime = searchVO.getSearchStartTime();
         LocalDate endTime = searchVO.getSearchEndTime();
         String demandOwner = searchVO.getDemandOwner();
+        LocalDateTime searchInTimeStrat = searchVO.getSearchInTimeStrat();
+        LocalDateTime searchInTimeEnd = searchVO.getSearchInTimeEnd();
         return new QueryWrapper<DemandInfo>()
                 .like(StringUtils.isNotBlank(demandName), "DEMAND_NAME", demandName)
                 .eq(StringUtils.isNotBlank(releaseSuccess), "RELEASE_SUCCESS", releaseSuccess)
                 .eq(StringUtils.isNotBlank(demandOwner), "DEMAND_OWNER", demandOwner)
                 .eq(StringUtils.isNotBlank(provName), "PROV_NAME", provName)
                 .ge(Objects.nonNull(startTime), "DEMAND_TIME", startTime)
-                .le(Objects.nonNull(endTime), "DEMAND_TIME", endTime);
+                .le(Objects.nonNull(endTime), "DEMAND_TIME", endTime)
+                .ge(Objects.nonNull(searchInTimeStrat), "CREATE_TIME", searchInTimeStrat)
+                .le(Objects.nonNull(searchInTimeEnd), "CREATE_TIME", searchInTimeEnd);
     }
 
     @Override
@@ -113,5 +119,12 @@ public class DemandServiceImpl implements DemandService {
         DemandInfo info = new DemandInfo();
         BeanUtils.copyProperties(demandInfo, info);
         return demandInfoDao.update(info, wrapper);
+    }
+
+    @Override
+    public boolean deleteDemand(String demandId) {
+        UpdateWrapper<DemandInfo> wrapper = new UpdateWrapper<DemandInfo>()
+                .eq("DEMAND_ID", demandId);
+        return demandInfoDao.delete(wrapper) > 0;
     }
 }
