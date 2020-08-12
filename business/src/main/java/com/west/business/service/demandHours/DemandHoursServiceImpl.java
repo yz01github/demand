@@ -86,7 +86,7 @@ public class DemandHoursServiceImpl implements DemandHoursService{
         return new QueryWrapper<DemandHours>()
                 .like(StringUtils.isNotBlank(demandName), "DEMAND_NAME", demandName)
                 .eq(StringUtils.isNotBlank(provName), "PROV_NAME", provName)
-                .ge(Objects.nonNull(startTime), "INPUT_TIME", startTime)
-                .le(Objects.nonNull(endTime), "INPUT_TIME", endTime);
+                .ge(Objects.nonNull(startTime), "DEMAND_TIME", startTime)
+                .le(Objects.nonNull(endTime), "DEMAND_TIME", endTime);
     }
 }

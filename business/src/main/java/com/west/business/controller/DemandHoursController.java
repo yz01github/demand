@@ -7,17 +7,22 @@ import com.west.business.pojo.vo.demandHours.CreateDemandHoursVO;
 import com.west.business.pojo.vo.demandHours.SearchDemandHoursVO;
 import com.west.business.pojo.vo.demandHours.UpdateDemandHoursVO;
 import com.west.business.pojo.vo.page.PageVO;
+import com.west.business.pojo.vo.user.QueryUserVO;
 import com.west.business.service.demandHours.DemandHoursService;
+import com.west.business.service.user.UserService;
 import com.west.domain.entity.DemandHours;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Api(tags = "工时录入")
@@ -29,6 +34,8 @@ public class DemandHoursController {
     @Autowired
     private DemandHoursService demandHoursService;
 
+    @Autowired
+    private UserService userService;
 
     @ApiOperation(value="录入",notes="录入工时信息")
     @PostMapping("/infos")
@@ -85,7 +92,28 @@ public class DemandHoursController {
     @ResponseBody
     public ResResult<IPage<CreateDemandHoursVO>> qryDemand(SearchDemandHoursVO searchVO, PageVO<DemandHours> pageVO) {
         IPage<CreateDemandHoursVO> iPage = demandHoursService.qryAll(searchVO, pageVO);
+        if(null != iPage.getRecords() && !iPage.getRecords().isEmpty()){
+            Map<String, String> user = getUsers();
+            for(int i = 0; i < iPage.getRecords().size(); i++){
+                String userId = iPage.getRecords().get(i).getDemandOwnerId();
+                String userName = user.get(userId);
+                if(StringUtils.isNotBlank(userName)){
+                    iPage.getRecords().get(i).setDemandOwnerId(userName);
+                }
+            }
+        }
         return ResResult.successAddData(iPage);
+    }
+
+    private Map<String,String> getUsers(){
+        Map<String, String> users = new HashMap<String, String>();
+        List<QueryUserVO> userList = userService.qryAll();
+        if(null != userList && !userList.isEmpty()){
+            for(int i = 0; i < userList.size(); i++){
+                users.put(userList.get(i).getUserId(), userList.get(i).getUserName());
+            }
+        }
+        return users;
     }
 
     @ApiOperation(value="修改",notes="修改已录入的工时信息")
