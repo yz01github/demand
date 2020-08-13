@@ -125,7 +125,7 @@ public class DemandController {
     public void demand(SearchDemandVO searchVO, PageVO<DemandInfo> pageVO, HttpServletResponse response) throws IOException {
         IPage<DemandInfoVO> iPage = demandService.qryAll(searchVO, pageVO);
         List<DemandInfoVO> collect = iPage.getRecords();
-        ExportParams exportParams = getExportParams();
+        ExportParams exportParams = ExcelUtil.getDefaultExportParams();
         ExcelUtil.defaultExport(collect, DemandInfoVO.class, "fileNameYZ", response, exportParams);
         log.debug("end...");
     }
@@ -135,20 +135,10 @@ public class DemandController {
     @GetMapping("/fileToday")
     public void demand(DemandInfoVO queryVO, HttpServletResponse response) {
         List<DemandInfoVO> collect = demandService.qryExcelData(queryVO);
-        ExportParams exportParams = getExportParams();
+        ExportParams exportParams = ExcelUtil.getDefaultExportParams();
         ExcelUtil.defaultExport(collect, DemandInfoVO.class, "fileNameYZ", response, exportParams);
         log.debug("end...");
     }
-
-    private ExportParams getExportParams(){
-        ExportParams exportParams = new ExportParams();
-        exportParams.setHeight((short) 7);
-        exportParams.setTitleHeight((short)7);
-        exportParams.setColor(HSSFColor.HSSFColorPredefined.LIGHT_TURQUOISE.getIndex());
-        exportParams.setStyle(ColorsStyle.class);
-        return exportParams;
-    }
-
 
     @ApiOperation(value="查询记录",notes="查询所有未逻辑删除的已有数据")
     @ApiImplicitParams({

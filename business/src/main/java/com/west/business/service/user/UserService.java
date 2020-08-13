@@ -39,4 +39,6 @@ public interface UserService {
     boolean resetPassword(CreateUserVO userVO);
 
     boolean resetAllPass();
+
+
 }
