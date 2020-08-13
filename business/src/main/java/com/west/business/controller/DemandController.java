@@ -74,9 +74,6 @@ public class DemandController {
             return ResResult.failAddMessage("录入失败,请填写正确的\"是否上线\"数据;[是 or 否]!");
         }
         String releaseSuccess = demandInfoVO.getReleaseSuccess();
-        if(!viewYN.contains(releaseSuccess)){
-            return ResResult.failAddMessage("录入失败,请填写正确的\"上线是否成功\"数据;[是 or 否]!");
-        }
         if(CommonConsts.VIEW_Y.equals(isOver) && !viewYN.contains(releaseSuccess)){
             return ResResult.failAddMessage("上线后必须输入\"上线结果\"[是 or 否]!");
         }
