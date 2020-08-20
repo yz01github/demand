@@ -1,0 +1,17 @@
+spring:
+  profiles:
+    active: dev
+  application:
+    name: aet
+  # 前到后@DateTimeFormat 后到前@JsonFormat
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+
+
+server: 
+  servlet: 
+    context-path: /aet
+
+logging:
+  level:
+    com.west : debug

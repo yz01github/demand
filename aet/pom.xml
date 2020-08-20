@@ -9,9 +9,9 @@
 		<artifactId>demand</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-	<artifactId>business</artifactId>
-	<name>business</name>
-	<version>0.0.2-SNAPSHOT</version>
+	<artifactId>aet</artifactId>
+	<name>aet</name>
+	<version>0.0.1-SNAPSHOT</version>
 	<url>http://maven.apache.org</url>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -88,13 +88,8 @@
 			<artifactId>mybatis-plus-boot-starter</artifactId>
 			<version>${mybaitsPlus.version}</version>
 		</dependency>
-		<!-- Redis -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-redis</artifactId>
-		</dependency>
 
-        <!-- 其余项目模块 -->
+		<!-- 其余项目模块 -->
 		<dependency>
 			<groupId>com.west</groupId>
 			<artifactId>domain</artifactId>

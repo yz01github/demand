@@ -18,6 +18,8 @@ public class FormatUtil {
     public static final String TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
 
     public static final String DATE_PATTERN = "yyyy-MM-dd";
+
+    public static final String DATE_PATTERN_8 = "yyyyMMdd";
     /**
      * SimpleDateFormat并不是线程安全的,因为在 SimpleDateFormat 中持有一个Calendar类对象在Parse 和Format方法时会调用calendar.setTime(date)方法,如果在多线程环境下运行,会出现线程安全问题
      * 解决方法之一:使用ThreadLocal初始化一个 SimpleDateFormat
@@ -34,6 +36,9 @@ public class FormatUtil {
     private static final DateTimeFormatter DATE_FORMATTER
             = DateTimeFormatter.ofPattern(DATE_PATTERN);
 
+    private static final DateTimeFormatter DATE_FORMATTER_8
+            = DateTimeFormatter.ofPattern(DATE_PATTERN_8);
+
     // 本地电脑不行,懒加载一下
     public static DateTimeFormatter getTimeFormat(){
         return TIME_FORMATTER;
@@ -41,5 +46,9 @@ public class FormatUtil {
 
     public static DateTimeFormatter getDateFormat(){
         return DATE_FORMATTER;
+    }
+
+    public static DateTimeFormatter getDateFormatyyyyMMdd(){
+        return DATE_FORMATTER_8;
     }
 }

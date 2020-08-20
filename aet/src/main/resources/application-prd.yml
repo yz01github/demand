@@ -29,15 +29,16 @@ spring:
   thymeleaf:
     prefix: classpath:htmls/
 
+
 server: 
-  port: 9091
+  port: 10002
 
 logging:
   level:
     com.west.business : debug
   config: classpath:config/logback-prd.xml
   # 日志文件夹地址
-  path: ./logs
+  path: ./logs/aet
 
 #eureka:
 #  client:

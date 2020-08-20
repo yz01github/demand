@@ -10,7 +10,10 @@ import com.west.business.pojo.vo.demand.DemandInfoVO;
 import com.west.business.pojo.vo.demand.SearchDemandVO;
 import com.west.business.pojo.vo.demand.UpdateDemandVO;
 import com.west.business.pojo.vo.page.PageVO;
+import com.west.business.pojo.vo.user.QueryUserVO;
 import com.west.business.service.demand.DemandService;
+import com.west.business.service.user.UserService;
+import com.west.business.util.date.DateUtils;
 import com.west.business.util.excel.ColorsStyle;
 import com.west.business.util.excel.ExcelUtil;
 import com.west.domain.entity.DemandInfo;
@@ -41,10 +44,12 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * description: [周报统计相关接口]
@@ -61,6 +66,9 @@ public class DemandController {
 
     @Autowired
     private DemandService demandService;
+
+    @Autowired
+    private UserService userService;
 
 
     @ApiOperation(value="录入",notes="录入周报记录")
@@ -118,21 +126,22 @@ public class DemandController {
     @ResponseBody
     @ApiOperation(value="导出",notes="导出所有记录到Excel")
     @GetMapping("/file")
-    public void demand(SearchDemandVO searchVO, PageVO<DemandInfo> pageVO, HttpServletResponse response) throws IOException {
-        IPage<DemandInfoVO> iPage = demandService.qryAll(searchVO, pageVO);
-        List<DemandInfoVO> collect = iPage.getRecords();
+    public void demandExport(DemandInfoVO queryVO, HttpServletResponse response) throws IOException {
+        List<DemandInfoVO> collect = new ArrayList<>();//demandService.qryExcelData(queryVO);
         ExportParams exportParams = getExportParams();
-        ExcelUtil.defaultExport(collect, DemandInfoVO.class, "fileNameYZ", response, exportParams);
+        ExcelUtil.defaultExport(collect, DemandInfoVO.class, "西北区全网组周报_", response, exportParams);
         log.debug("end...");
     }
 
     @ResponseBody
     @ApiOperation(value="导出今日",notes="导出今天所有记录到Excel")
     @GetMapping("/fileToday")
-    public void demand(DemandInfoVO queryVO, HttpServletResponse response) {
+    public void demandExportToday(DemandInfoVO queryVO, HttpServletResponse response) {
+        // TODO TEST
         List<DemandInfoVO> collect = demandService.qryExcelData(queryVO);
         ExportParams exportParams = getExportParams();
-        ExcelUtil.defaultExport(collect, DemandInfoVO.class, "fileNameYZ", response, exportParams);
+        ExcelUtil.defaultExport(collect, DemandInfoVO.class, "西北区全网组周报_"+DateUtils.getSysDateyyyyMMdd(),
+                response, exportParams);
         log.debug("end...");
     }
 
@@ -199,4 +208,21 @@ public class DemandController {
         return ResResult.successAddData(num);
     }
 
+    @ApiOperation(value="录入(ModelAttribute)",notes="录入周报记录")
+    @PostMapping("/input")
+    @ResponseBody
+    public ResResult<Integer> inputInfo(@ModelAttribute @Valid DemandInfoVO demandInfoVO) {
+        return putInfo(demandInfoVO);
+    }
+
+    public ResResult qryInput(){
+        List<QueryUserVO> userVOS = userService.qryAll();
+        List<String> allNames = userVOS.stream().map(QueryUserVO::getUserName).collect(Collectors.toList());
+        List<DemandInfoVO> infoVOS = demandService.qryExcelData(new DemandInfoVO());
+        List<String> users = infoVOS.stream().filter(o -> !allNames.contains(o.getDemandOwner()))
+                .map(DemandInfoVO::getDemandOwner)
+                .collect(Collectors.toList());
+        String resStr = "当前未录入周报的员工有:"+users;
+        return ResResult.successAddData(resStr);
+    }
 }

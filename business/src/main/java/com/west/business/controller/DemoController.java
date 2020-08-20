@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,6 +46,17 @@ public class DemoController {
 
 	@Autowired
 	private DemoService demoService;
+
+	@Autowired
+	private RedisTemplate redisTemplate;
+
+	@GetMapping("/redistest")
+	public String test(String testStr) {
+		User user = new User();
+		user.setUserName(testStr);
+		redisTemplate.boundGeoOps()
+		return demoService.demoRequest(str + request.getRequestURI());
+	}
 
 	@ApiIgnore
 	@GetMapping("/{str}")

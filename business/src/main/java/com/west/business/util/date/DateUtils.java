@@ -21,8 +21,13 @@ public class DateUtils {
     }
 
     public static String getSysDate(){
-        return LocalDateTime.now().format(FormatUtil.getDateFormat());
+        return LocalDate.now().format(FormatUtil.getDateFormat());
     }
+
+    public static String getSysDateyyyyMMdd(){
+        return LocalDate.now().format(FormatUtil.getDateFormatyyyyMMdd());
+    }
+
 
     // 获取几天前日期
     public static LocalDate dateAddDay(long days2Add){

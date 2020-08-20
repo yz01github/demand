@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: dev
+    active: prd
   application:
     name: business
   # 前到后@DateTimeFormat 后到前@JsonFormat
