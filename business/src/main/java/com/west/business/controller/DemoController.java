@@ -54,8 +54,7 @@ public class DemoController {
 	public String test(String testStr) {
 		User user = new User();
 		user.setUserName(testStr);
-		redisTemplate.boundGeoOps()
-		return demoService.demoRequest(str + request.getRequestURI());
+		return "";
 	}
 
 	@ApiIgnore
