@@ -41,6 +41,9 @@ public class ConfigParamDTO {
         this.configCode = configCode;
     }
 
+    public ConfigParamDTO(){
+    }
+
     public ConfigParamDTO(String configSys, String configCode, String configValue1){
         this.configSys = configSys;
         this.configCode = configCode;

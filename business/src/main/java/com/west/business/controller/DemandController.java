@@ -137,7 +137,6 @@ public class DemandController {
     @ApiOperation(value="导出今日",notes="导出今天所有记录到Excel")
     @GetMapping("/fileToday")
     public void demandExportToday(DemandInfoVO queryVO, HttpServletResponse response) {
-        // TODO TEST
         List<DemandInfoVO> collect = demandService.qryExcelData(queryVO);
         ExportParams exportParams = getExportParams();
         ExcelUtil.defaultExport(collect, DemandInfoVO.class, "西北区全网组周报_"+DateUtils.getSysDateyyyyMMdd(),
@@ -215,6 +214,9 @@ public class DemandController {
         return putInfo(demandInfoVO);
     }
 
+    @ApiOperation(value="查询未录入周报员工",notes="查询未录入周报员工")
+    @GetMapping("/noInputUser")
+    @ResponseBody
     public ResResult qryInput(){
         List<QueryUserVO> userVOS = userService.qryAll();
         List<String> allNames = userVOS.stream().map(QueryUserVO::getUserName).collect(Collectors.toList());
