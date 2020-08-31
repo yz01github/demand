@@ -36,12 +36,12 @@ public class ConfigParamDTO {
     // 配置值5
     private String configValue5;
 
+    public ConfigParamDTO(){
+    }
+
     public ConfigParamDTO(String configSys, String configCode){
         this.configSys = configSys;
         this.configCode = configCode;
-    }
-
-    public ConfigParamDTO(){
     }
 
     public ConfigParamDTO(String configSys, String configCode, String configValue1){

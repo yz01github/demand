@@ -32,7 +32,7 @@ public class DemandEntity extends BaseEntity {
     private String demandOwnerId;
 
     // 需求开发人(大多数情况下和"需求负责人"一致,小部分由负责人分析把控,开发者开发)
-    private String demandDevOwnerId;
+    private String demandDevownerId;
 
     // 需求所需开发省份
     private String demandProv;
