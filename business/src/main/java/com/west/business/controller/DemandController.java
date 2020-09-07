@@ -48,6 +48,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -221,10 +222,11 @@ public class DemandController {
         List<QueryUserVO> userVOS = userService.qryAll();
         List<String> allNames = userVOS.stream().map(QueryUserVO::getUserName).collect(Collectors.toList());
         List<DemandInfoVO> infoVOS = demandService.qryExcelData(new DemandInfoVO());
-        List<String> users = infoVOS.stream().filter(o -> !allNames.contains(o.getDemandOwner()))
-                .map(DemandInfoVO::getDemandOwner)
-                .collect(Collectors.toList());
-        String resStr = "当前未录入周报的员工有:"+users;
+        Set<String> inputUsers = infoVOS.stream().map(DemandInfoVO::getDemandOwner)
+                            .collect(Collectors.toSet());
+        allNames.removeAll(inputUsers);
+        String resStr = new StringBuilder("当前未录入周报的员工有:").append(allNames)
+                            .append("已录入的员工有:").append(inputUsers).toString();
         return ResResult.successAddData(resStr);
     }
 }
