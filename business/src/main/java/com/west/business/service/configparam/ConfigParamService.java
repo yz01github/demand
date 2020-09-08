@@ -17,4 +17,6 @@ public interface ConfigParamService {
     List<ConfigParamDTO> qryConfByValue1(ConfigParamDTO paramDTO);
 
     List<ConfigParamDTO> qryConfByValue1(ConfigParamDTO paramDTO, boolean canEmpty);
+
+    List<ConfigParamDTO> qryConfByCode(ConfigParamDTO paramDTO);
 }

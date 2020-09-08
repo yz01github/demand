@@ -21,6 +21,9 @@ public class ConfigParamDTO {
     // 配置编码
     private String configCode;
 
+    // 配置描述
+    private String configDesc;
+
     // 配置值1
     private String configValue1;
 
@@ -35,6 +38,12 @@ public class ConfigParamDTO {
 
     // 配置值5
     private String configValue5;
+
+    // 权限编码(预留)
+    private String permCode;
+
+    // 配置值5
+    private String remark;
 
     public ConfigParamDTO(){
     }

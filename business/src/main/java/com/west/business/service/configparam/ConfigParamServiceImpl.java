@@ -35,6 +35,13 @@ public class ConfigParamServiceImpl implements ConfigParamService {
         return qryConfByValue1(paramDTO, false);
     }
 
+    /**
+     * description: [根据code和value1查询配置]
+     * @param   canEmpty    是否为空时不报错
+     * @return  List<ConfigParamDTO>    查询结果
+     * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>
+     * created 2020/9/8
+     */
     @Override
     public List<ConfigParamDTO> qryConfByValue1(ConfigParamDTO paramDTO, boolean canEmpty) {
         Wrapper<ConfigEntity> wrapper = buildWrapper(paramDTO);
@@ -49,6 +56,26 @@ public class ConfigParamServiceImpl implements ConfigParamService {
                 throw new RuntimeException("配置["+configSys+"]["+configCode+"]["+configValue1+"]为空");
             }
         }
+        return listConvert(list);
+    }
+
+    /**
+     * description: [获取指定配置 by code]
+     * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>
+     * created 2020/9/8
+     */
+    @Override
+    public List<ConfigParamDTO> qryConfByCode(ConfigParamDTO paramDTO) {
+        String configSys = paramDTO.getConfigSys();
+        String configCode = paramDTO.getConfigCode();
+        QueryWrapper<ConfigEntity> wrapper = new QueryWrapper<ConfigEntity>()
+                .eq(StringUtils.isNotBlank(configSys),"CONFIG_SYS", configSys)
+                .eq(StringUtils.isNotBlank(configCode), "CONFIG_CODE", configCode);
+        List<ConfigEntity> list = configParamDao.selectList(wrapper);
+        return listConvert(list);
+    }
+
+    private List<ConfigParamDTO> listConvert(List<ConfigEntity> list){
         return list.stream().map(o -> o2DTO(o)).collect(Collectors.toList());
     }
 

@@ -16,7 +16,7 @@ public interface DemandsService {
 
     int createDemand(CreateDemandsVO demandVO);
 
-    Object updateDemandState(UpdateDemandsStateVO demandVO);
+    int updateDemandState(UpdateDemandsStateVO demandVO);
 
     IPage<DemandInfoVO> qryAll(SearchDemandVO searchVO, PageVO<DemandInfo> pageVOe);
 

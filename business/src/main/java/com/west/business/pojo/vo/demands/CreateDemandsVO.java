@@ -1,9 +1,11 @@
 package com.west.business.pojo.vo.demands;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.west.domain.entity.base.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
@@ -38,12 +40,15 @@ public class CreateDemandsVO {
     private String demandAboutModules;
 
     // 需求提出时间
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime demandBeginTime;
 
     // 需求联调开始时间
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime demandTestBeginTime;
 
     // 需求要求完成时间
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime demandEndTime;
 
     // 需求当前状态(0-待派发,1-问题确认中/分析中,2-开发中,3-自测中,4-联调中,5-已上线)

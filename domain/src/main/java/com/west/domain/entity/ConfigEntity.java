@@ -23,6 +23,9 @@ public class ConfigEntity extends BaseEntity {
     // 配置编码
     private String configCode;
 
+    // 配置描述
+    private String configDesc;
+
     // 配置值1
     private String configValue1;
 
@@ -37,5 +40,11 @@ public class ConfigEntity extends BaseEntity {
 
     // 配置值5
     private String configValue5;
+
+    // 权限编码(预留)
+    private String permCode;
+
+    // 备注
+    private String remark;
 
 }

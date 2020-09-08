@@ -19,9 +19,13 @@ public class UpdateDemandsStateVO {
     @NotBlank
     private String demandId;
 
-    // 需求当前状态(0-待派发,1-问题确认中/分析中,2-开发中,2_1-问题未完全确认,开发中,3-自测中,4-联调中,5-已上线)
+    // 需求当前状态 见 StateEnum
     @NotBlank
     private String demandState;
+
+    // 需求下一状态 见 StateEnum
+    @NotBlank
+    private String nextState;
 
     // 备注
     private String remark;
