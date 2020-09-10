@@ -1,5 +1,6 @@
 package com.west.business.service.demands;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.west.business.consts.CommonConsts;
@@ -7,15 +8,23 @@ import com.west.business.pojo.dto.ConfigParamDTO;
 import com.west.business.pojo.vo.demand.DemandInfoVO;
 import com.west.business.pojo.vo.demand.SearchDemandVO;
 import com.west.business.pojo.vo.demand.UpdateDemandVO;
+import com.west.business.pojo.vo.demandHours.CreateDemandHoursVO;
 import com.west.business.pojo.vo.demands.CreateDemandsVO;
+import com.west.business.pojo.vo.demands.DemandsVO;
+import com.west.business.pojo.vo.demands.QueryDemandVO;
 import com.west.business.pojo.vo.demands.UpdateDemandsStateVO;
+import com.west.business.pojo.vo.demands.UpdateDemandsVO;
 import com.west.business.pojo.vo.page.PageVO;
+import com.west.business.pojo.vo.user.QueryUserVO;
 import com.west.business.service.configparam.ConfigParamService;
 import com.west.business.util.GeneratorUtil;
 import com.west.domain.dao.DemandsDao;
 import com.west.domain.entity.DemandEntity;
+import com.west.domain.entity.DemandHours;
 import com.west.domain.entity.DemandInfo;
+import com.west.domain.entity.User;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +33,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 
 /**
@@ -35,8 +45,6 @@ import java.util.Map;
 @Slf4j
 @Service
 public class DemandsServiceImpl implements DemandsService {
-
-
 
     @Autowired
     private DemandsDao demandsDao;
@@ -54,10 +62,12 @@ public class DemandsServiceImpl implements DemandsService {
 
     @Override
     public int updateDemandState(UpdateDemandsStateVO updateVO) {
-        permCheck(updateVO);//权限校验
+        //权限校验
+        permCheck(updateVO);
+        //获取下一节点,并校验合法性
         String nowState = updateVO.getDemandState();
         String nextState = updateVO.getNextState();
-        List<String> nextStates = StateEnum.getNextCodes(nowState);//获取下一节点
+        List<String> nextStates = StateEnum.getNextCodes(nowState);
         if(!nextStates.contains(nextState)){
             throw new RuntimeException("["+StateEnum.getStateName(nowState)+"]状态不能直接跳转到["
                     +StateEnum.getStateName(nextState)+"]状态");
@@ -73,7 +83,7 @@ public class DemandsServiceImpl implements DemandsService {
     }
 
     /**
-     * description: [校验勇士是否具有节点操作权限]
+     * description: [校验用户是否具有节点操作权限]
      * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>
      * created 2020/9/8
      */
@@ -93,25 +103,103 @@ public class DemandsServiceImpl implements DemandsService {
         }
     }
 
+    /**
+     * description: [查询负责人为指定用户的并且不是结束状态的需求信息]
+     * @param   qryVO   查询入参
+     * @param   pageVO   分页入参
+     * @return  IPage<DemandInfoVO> 分页查询结果
+     * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>
+     * created 2020/9/10
+     */
     @Override
-    public IPage<DemandInfoVO> qryAll(SearchDemandVO searchVO, PageVO<DemandInfo> pageVOe) {
+    public IPage<DemandsVO> qryTodoDemandsByOwnerId(QueryDemandVO qryVO, PageVO<DemandInfo> pageVO) {
+        String demandName = qryVO.getDemandName();
+        String ownerId = qryVO.getDemandOwnerId();
+        QueryWrapper<DemandEntity> wrapper = new QueryWrapper<>();
+        wrapper.eq("DEMAND_OWNER_ID", ownerId);
+        wrapper.notIn("DEMAND_STATE", StateEnum.BUSI_E.getStateCode());
+        wrapper.like(StringUtils.isNotBlank(demandName),"DEMAND_NAME", demandName);
+        IPage<DemandInfo> iPage = demandsDao.selectPage(pageVO.getPage(), wrapper);
+        return iPage.convert(obj2vo());
+    }
+
+    /**
+     * description: [查询所有需求信息,支持多种条件,此接口纳入权限管控]
+     * @param   qryVO   查询条件
+     * @param   pageVO  分页条件
+     * @return  IPage<DemandsVO>    查询结果
+     * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>
+     * created 2020/9/10
+     */
+    @Override
+    public IPage<DemandsVO> qryAllByCond(DemandsVO qryVO, PageVO<DemandInfo> pageVO) {
+        String demandOwnerId = qryVO.getDemandOwnerId();
+        String demandCode = qryVO.getDemandCode();
+        String demandState = qryVO.getDemandState();
+        String demandName = qryVO.getDemandName();
+        String demandProv = qryVO.getDemandProv();
+        QueryWrapper<DemandEntity> wrapper = new QueryWrapper<>();
+        wrapper.eq(StringUtils.isNotBlank(demandOwnerId),"DEMAND_OWNER_ID", demandOwnerId);
+        wrapper.eq(StringUtils.isNotBlank(demandCode),"DEMAND_CODE", demandCode);
+        wrapper.eq(StringUtils.isNotBlank(demandState),"DEMAND_STATE", demandState);
+        wrapper.eq(StringUtils.isNotBlank(demandProv),"DEMAND_PROV", demandProv);
+        wrapper.like(StringUtils.isNotBlank(demandName),"DEMAND_NAME", demandName);
+        IPage<DemandInfo> iPage = demandsDao.selectPage(pageVO.getPage(), wrapper);
+        return iPage.convert(obj2vo());
+    }
+
+    @Override
+    public List<DemandsVO> searchByName(String name) {
         return null;
     }
 
     @Override
-    public List<DemandInfoVO> searchByName(String name) {
+    public List<DemandsVO> qryExcelData(DemandInfoVO queryVO) {
         return null;
     }
 
+    /**
+     * description: [更新需求信息, 禁止更新需求状态]
+     * @param   demandInfo  更新入参
+     * @return  int 更新成功条数
+     * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>
+     * created 2020/9/10
+     */
     @Override
-    public List<DemandInfoVO> qryExcelData(DemandInfoVO queryVO) {
-        return null;
+    public int updateDemand(UpdateDemandsVO demandInfo) {
+        demandInfo.setDemandState(null);// 此接口禁止更新状态
+        DemandEntity entity = new DemandEntity();
+        BeanUtils.copyProperties(demandInfo, entity);
+        String demandId = demandInfo.getDemandId();
+        UpdateWrapper<DemandEntity> wrapper = new UpdateWrapper<>();
+        wrapper.eq("DEMAND_ID", demandId);
+        return demandsDao.update(entity, wrapper);
     }
 
+    /**
+     * description: [do something]
+     * @param   demandId    删除的需求Id
+     * @return  int         操作影响的条数
+     * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>
+     * created 2020/9/10
+     */
     @Override
-    public int updateDemand(UpdateDemandVO demandInfo) {
+    public int deleteDemand(String demandId) {
+
         return 0;
     }
 
+    /**
+     * description: [转换vo]
+     * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>
+     * created 2020/9/10
+     */
+    private Function<DemandInfo, DemandsVO> obj2vo(){
+        return o -> {
+            DemandsVO vo = new DemandsVO();
+            BeanUtils.copyProperties(o, vo);
+            return vo;
+        };
+    }
 
 }

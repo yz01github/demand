@@ -20,12 +20,13 @@ public class UpdateDemandsStateVO {
     private String demandId;
 
     // 需求当前状态 见 StateEnum
-    @NotBlank
     private String demandState;
 
     // 需求下一状态 见 StateEnum
-    @NotBlank
     private String nextState;
+
+    // 需求开发进度(0-100)
+    private Integer devProgress;
 
     // 备注
     private String remark;

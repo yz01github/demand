@@ -1,23 +1,18 @@
-package com.west.domain.entity;
+package com.west.business.pojo.vo.demands;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.west.domain.entity.base.BaseEntity;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
 
 /**
  * description: []
- * title: DemandEntity
+ * title: DemandsVO
  *
  * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>
- * created 2020/8/20
+ * created 2020/9/10
  */
-@TableName(value = "TD_DMP_DEMANDS")
 @Data
-@EqualsAndHashCode(callSuper = false)
-public class DemandEntity extends BaseEntity {
+public class DemandsVO {
 
     // 唯一标识,UUID
     private String demandId;
@@ -59,5 +54,4 @@ public class DemandEntity extends BaseEntity {
     private String remark;
 
     // 附件与需求关联关系为: 1需求-多附件 ,所以在附件表中加入demandId
-
 }

@@ -2,6 +2,7 @@ package com.west.business.util.redis;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
@@ -10,12 +11,13 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
- * description: [redis常用方法,由于引用注入,不作为Util,使用时请注入此对象]
+ * description: [redis常用方法]
  * title: RedisHelper
  *
  * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>
  * created 2020/8/18
  */
+@Component
 public class RedisHelper {
 
     @Autowired
