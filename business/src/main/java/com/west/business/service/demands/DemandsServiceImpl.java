@@ -49,9 +49,6 @@ public class DemandsServiceImpl implements DemandsService {
     @Autowired
     private DemandsDao demandsDao;
 
-    @Autowired
-    private ConfigParamService paramService;
-
     @Override
     public int createDemand(CreateDemandsVO demandVO) {
         DemandEntity demandEntity = new DemandEntity();
@@ -185,8 +182,9 @@ public class DemandsServiceImpl implements DemandsService {
      */
     @Override
     public int deleteDemand(String demandId) {
-
-        return 0;
+        QueryWrapper<DemandEntity> wrapper = new QueryWrapper<>();
+        wrapper.eq("DEMAND_ID", demandId);
+        return demandsDao.delete(wrapper);
     }
 
     /**

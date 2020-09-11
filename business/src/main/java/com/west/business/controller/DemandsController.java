@@ -117,7 +117,7 @@ public class DemandsController {
      * created 2020/9/10
      */
     @ApiOperation(value="删除",notes="删除指定需求,此功能后期应当列入功能权限")
-    @GetMapping("/demandId")
+    @GetMapping("/{demandId}")
     public ResResult deleteDemand(@PathVariable("demandId") String demandId) {
         int num = demandsService.deleteDemand(demandId);
         return ResResult.result(num > 0);
