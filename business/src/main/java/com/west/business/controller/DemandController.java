@@ -138,12 +138,7 @@ public class DemandController {
     }
 
     private ExportParams getExportParams(){
-        ExportParams exportParams = new ExportParams();
-        exportParams.setHeight((short) 7);
-        exportParams.setTitleHeight((short)7);
-        exportParams.setColor(HSSFColor.HSSFColorPredefined.LIGHT_TURQUOISE.getIndex());
-        exportParams.setStyle(ColorsStyle.class);
-        return exportParams;
+        return ExcelUtil.defaultExportParams();
     }
 
 

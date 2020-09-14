@@ -3,26 +3,18 @@ package com.west.business.service.demands;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.west.business.consts.CommonConsts;
-import com.west.business.pojo.dto.ConfigParamDTO;
 import com.west.business.pojo.vo.demand.DemandInfoVO;
-import com.west.business.pojo.vo.demand.SearchDemandVO;
-import com.west.business.pojo.vo.demand.UpdateDemandVO;
-import com.west.business.pojo.vo.demandHours.CreateDemandHoursVO;
 import com.west.business.pojo.vo.demands.CreateDemandsVO;
 import com.west.business.pojo.vo.demands.DemandsVO;
+import com.west.business.pojo.vo.demands.QueryAllDemandVO;
 import com.west.business.pojo.vo.demands.QueryDemandVO;
 import com.west.business.pojo.vo.demands.UpdateDemandsStateVO;
 import com.west.business.pojo.vo.demands.UpdateDemandsVO;
 import com.west.business.pojo.vo.page.PageVO;
-import com.west.business.pojo.vo.user.QueryUserVO;
-import com.west.business.service.configparam.ConfigParamService;
 import com.west.business.util.GeneratorUtil;
 import com.west.domain.dao.DemandsDao;
 import com.west.domain.entity.DemandEntity;
-import com.west.domain.entity.DemandHours;
 import com.west.domain.entity.DemandInfo;
-import com.west.domain.entity.User;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -116,7 +108,7 @@ public class DemandsServiceImpl implements DemandsService {
         wrapper.eq("DEMAND_OWNER_ID", ownerId);
         wrapper.notIn("DEMAND_STATE", StateEnum.BUSI_E.getStateCode());
         wrapper.like(StringUtils.isNotBlank(demandName),"DEMAND_NAME", demandName);
-        IPage<DemandInfo> iPage = demandsDao.selectPage(pageVO.getPage(), wrapper);
+        IPage<DemandEntity> iPage = demandsDao.selectPage(pageVO.getPage(), wrapper);
         return iPage.convert(obj2vo());
     }
 
@@ -129,7 +121,7 @@ public class DemandsServiceImpl implements DemandsService {
      * created 2020/9/10
      */
     @Override
-    public IPage<DemandsVO> qryAllByCond(DemandsVO qryVO, PageVO<DemandInfo> pageVO) {
+    public IPage<DemandsVO> qryAllByCond(QueryAllDemandVO qryVO, PageVO<DemandInfo> pageVO) {
         String demandOwnerId = qryVO.getDemandOwnerId();
         String demandCode = qryVO.getDemandCode();
         String demandState = qryVO.getDemandState();
@@ -141,7 +133,7 @@ public class DemandsServiceImpl implements DemandsService {
         wrapper.eq(StringUtils.isNotBlank(demandState),"DEMAND_STATE", demandState);
         wrapper.eq(StringUtils.isNotBlank(demandProv),"DEMAND_PROV", demandProv);
         wrapper.like(StringUtils.isNotBlank(demandName),"DEMAND_NAME", demandName);
-        IPage<DemandInfo> iPage = demandsDao.selectPage(pageVO.getPage(), wrapper);
+        IPage<DemandEntity> iPage = demandsDao.selectPage(pageVO.getPage(), wrapper);
         return iPage.convert(obj2vo());
     }
 
@@ -192,7 +184,7 @@ public class DemandsServiceImpl implements DemandsService {
      * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>
      * created 2020/9/10
      */
-    private Function<DemandInfo, DemandsVO> obj2vo(){
+    private Function<DemandEntity, DemandsVO> obj2vo(){
         return o -> {
             DemandsVO vo = new DemandsVO();
             BeanUtils.copyProperties(o, vo);

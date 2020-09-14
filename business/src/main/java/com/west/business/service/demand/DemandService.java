@@ -21,4 +21,6 @@ public interface DemandService {
     List<DemandInfoVO> qryExcelData(DemandInfoVO queryVO);
 
     int updateDemand(UpdateDemandVO demandInfo);
+
+    boolean deleteDemand(String demandId);
 }

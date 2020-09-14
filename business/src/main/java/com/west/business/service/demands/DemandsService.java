@@ -6,6 +6,7 @@ import com.west.business.pojo.vo.demand.DemandInfoVO;
 import com.west.business.pojo.vo.demand.UpdateDemandVO;
 import com.west.business.pojo.vo.demands.CreateDemandsVO;
 import com.west.business.pojo.vo.demands.DemandsVO;
+import com.west.business.pojo.vo.demands.QueryAllDemandVO;
 import com.west.business.pojo.vo.demands.QueryDemandVO;
 import com.west.business.pojo.vo.demands.UpdateDemandsStateVO;
 import com.west.business.pojo.vo.demands.UpdateDemandsVO;
@@ -26,7 +27,7 @@ public interface DemandsService {
     IPage<DemandsVO> qryTodoDemandsByOwnerId(QueryDemandVO qryVO, PageVO<DemandInfo> pageVOe);
 
     // 查询所有需求信息,支持多种条件,此接口纳入权限管控
-    IPage<DemandsVO> qryAllByCond(DemandsVO qryVO, PageVO<DemandInfo> pageVO);
+    IPage<DemandsVO> qryAllByCond(QueryAllDemandVO qryVO, PageVO<DemandInfo> pageVO);
 
     List<DemandsVO> searchByName(String name);
 

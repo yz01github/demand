@@ -7,6 +7,7 @@ import cn.afterturn.easypoi.excel.entity.ImportParams;
 import cn.afterturn.easypoi.excel.entity.enmus.ExcelType;
 import cn.afterturn.easypoi.excel.export.styler.ExcelExportStylerColorImpl;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
@@ -31,6 +32,20 @@ import java.util.NoSuchElementException;
  * created 2020/7/18
  */
 public class ExcelUtil {
+
+    /**
+     * description: [默认导出Excel格式参数]
+     * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>
+     * created 2020/9/14
+     */
+    public static ExportParams defaultExportParams(){
+        ExportParams exportParams = new ExportParams();
+        exportParams.setHeight((short) 7);
+        exportParams.setTitleHeight((short)7);
+        exportParams.setColor(HSSFColor.HSSFColorPredefined.LIGHT_TURQUOISE.getIndex());
+        exportParams.setStyle(ColorsStyle.class);
+        return exportParams;
+    }
 
     public static void exportExcel(List<Map<String, Object>> list, String fileName, HttpServletResponse response){
         defaultExport(list, fileName, response);

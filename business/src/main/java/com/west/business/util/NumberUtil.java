@@ -3,6 +3,7 @@ package com.west.business.util;
 import io.swagger.models.auth.In;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -59,6 +60,11 @@ public class NumberUtil {
         }else{
             throw new IllegalArgumentException("数字类型不完全相同,无法比较");
         }
+    }
+
+    @Test
+    public void test(){
+        between(1.2, 1, 2);
     }
 
     /**

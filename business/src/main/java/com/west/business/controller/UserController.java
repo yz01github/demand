@@ -55,6 +55,8 @@ public class UserController {
 
     /**
      * description: [ TODO 这个接口尚待完善,目前已知问题: 登录时产生了两个cookie_token, 另外,退出登录接口还没写]
+     * [登录后session:{userId:${userId}, ${userId}_token:UUID},
+     *  登录后cookie:{${userId}_token:UUID}]
      * @param   userVO  登录信息
      * @return  ResResult   登录结果;成功时返回用户相关信息
      * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>
@@ -127,6 +129,25 @@ public class UserController {
         userVO.setUserId(userId.toString());
         List<QueryUserVO> queryUserVOS = userService.qryByCond(userVO);
         return ResResult.successAddData(queryUserVOS.get(0));
+    }
+
+    /**
+     * description: [退出出登录]
+     * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>
+     * created 2020/9/11
+     */
+    @GetMapping("/logout")
+    public ResResult logout(HttpServletRequest request, HttpServletResponse responce) {
+        String userId = (String) request.getSession().getAttribute("userId");
+        if(StringUtils.isBlank(userId)){
+            ResResult.success("未登录或登录过期,无需退出登录!");
+        }
+        String userToken = userId+"_token";
+        request.getSession().setAttribute("userId", null);
+        request.getSession().setAttribute(userToken, null);
+        Cookie cookie = new Cookie(userToken, null);
+        responce.addCookie(cookie);
+        return ResResult.success();
     }
 
     @ApiOperation("新增用户接口")

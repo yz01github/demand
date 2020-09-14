@@ -27,7 +27,7 @@ import java.util.Arrays;
 public class LogAspectConfig {
 
     public int getOrder() {
-        return 2;// 切面优先级,越小越优先
+        return 10;// 切面优先级,越小越优先
     }
 
     @Pointcut("@annotation(org.springframework.web.bind.annotation.GetMapping) ||" +
