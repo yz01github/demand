@@ -1,12 +1,16 @@
 package com.west.business.util.redis;
 
+import com.west.business.service.configparam.ConfigParamService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -18,10 +22,18 @@ import java.util.concurrent.TimeUnit;
  * created 2020/8/18
  */
 @Component
-public class RedisHelper {
+public class RedisUtil {
 
     @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
+    private RedisTemplate<String, Object> redisTemp;
+
+    private static RedisTemplate<String, Object> redisTemplate;
+
+    // 顺序： Constructor >> @Autowired >> @PostConstruct >> 静态方法, 所有Autowired完成后自动执行PostConstruct
+    @PostConstruct
+    public void init() {
+        redisTemplate = this.redisTemp;
+    }
 
     /**
      * description: [指定缓存失效时间]
@@ -95,8 +107,12 @@ public class RedisHelper {
      * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>
      * created 2020/8/20
      */
-    public Object get(String key) {
-        return key == null ? null : redisTemplate.opsForValue().get(key);
+    public String get(String key) {
+        if(StringUtils.isBlank(key)){
+            return null;
+        }
+        Object result = redisTemplate.opsForValue().get(key);
+        return Objects.isNull(result) ? null : result.toString();
     }
 
     /**
@@ -115,7 +131,6 @@ public class RedisHelper {
             e.printStackTrace();
             return false;
         }
-
     }
 
     /**
