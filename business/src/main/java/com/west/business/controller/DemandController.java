@@ -12,6 +12,7 @@ import com.west.business.pojo.vo.page.PageVO;
 import com.west.business.pojo.vo.user.QueryUserVO;
 import com.west.business.service.demand.DemandService;
 import com.west.business.service.user.UserService;
+import com.west.business.util.date.DateUtils;
 import com.west.business.util.excel.ColorsStyle;
 import com.west.business.util.excel.ExcelUtil;
 import com.west.domain.entity.DemandInfo;
@@ -67,7 +68,7 @@ public class DemandController {
     @ApiOperation(value="录入",notes="录入周报记录")
     @PostMapping("/infos")
     @ResponseBody
-    public ResResult<Integer> putInfo(/*@ModelAttribute*/ @RequestBody @Valid DemandInfoVO demandInfoVO) {
+    public ResResult<Integer> putInfo(@ModelAttribute /*@RequestBody*/ @Valid DemandInfoVO demandInfoVO) {
         log.debug("demandInfoVO;{}", demandInfoVO);
         String isOver = demandInfoVO.getIsOver();
         List<String> viewYN = Arrays.asList(CommonConsts.VIEW_Y, CommonConsts.VIEW_N);
@@ -114,6 +115,10 @@ public class DemandController {
     private void replaceValue(DemandInfoVO demandInfoVO) {
         demandInfoVO.setIsOver(ConvertYN.convert(demandInfoVO.getIsOver(),false));
         demandInfoVO.setReleaseSuccess(ConvertYN.convert(demandInfoVO.getReleaseSuccess(),false));
+        String relatedModules = demandInfoVO.getRelatedModules();
+        if(StringUtils.isNotBlank(relatedModules)){
+            demandInfoVO.setRelatedModules(relatedModules.toUpperCase());
+        }
     }
 
     @ResponseBody
@@ -133,7 +138,8 @@ public class DemandController {
     public void demand(DemandInfoVO queryVO, HttpServletResponse response) {
         List<DemandInfoVO> collect = demandService.qryExcelData(queryVO);
         ExportParams exportParams = getExportParams();
-        ExcelUtil.defaultExport(collect, DemandInfoVO.class, "fileNameYZ", response, exportParams);
+        ExcelUtil.defaultExport(collect, DemandInfoVO.class, "西北区全网组周报_"+ DateUtils.getSysDateyyyyMMdd(),
+                response, exportParams);
         log.debug("end...");
     }
 

@@ -1,6 +1,7 @@
 package com.west.business.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.west.business.config.ThreadContext;
 import com.west.business.pojo.pub.ResResult;
 import com.west.business.pojo.vo.page.PageVO;
 import com.west.business.pojo.vo.user.CreateUserVO;
@@ -9,6 +10,7 @@ import com.west.business.pojo.vo.user.QueryUserVO;
 import com.west.business.pojo.vo.user.UpdateUserVO;
 import com.west.business.service.user.UserService;
 import com.west.business.util.GeneratorUtil;
+import com.west.domain.entity.User;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;

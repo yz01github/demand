@@ -1,8 +1,10 @@
 package com.west.business.util.redis;
 
-import com.west.business.service.configparam.ConfigParamService;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -21,18 +23,27 @@ import java.util.concurrent.TimeUnit;
  * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>
  * created 2020/8/18
  */
+@Slf4j
+@Lazy(false)
 @Component
+@NoArgsConstructor
 public class RedisUtil {
 
+    // 默认生命周期,30分钟
+    private static Long DEFAULT_TTL = 60L * 30;
+
     @Autowired
-    private RedisTemplate<String, Object> redisTemp;
+    private RedisTemplate<String, Object> redisTempInit;
 
     private static RedisTemplate<String, Object> redisTemplate;
 
-    // 顺序： Constructor >> @Autowired >> @PostConstruct >> 静态方法, 所有Autowired完成后自动执行PostConstruct
+    /**
+     * 顺序： Constructor >> @Autowired >> @PostConstruct >> 静态方法
+     * 所有Autowired完成后自动执行PostConstruct, 未生效则注意:不应懒加载,Component在主类中扫描的范围
+     */
     @PostConstruct
     public void init() {
-        redisTemplate = this.redisTemp;
+        redisTemplate = this.redisTempInit;
     }
 
     /**
@@ -43,7 +54,7 @@ public class RedisUtil {
      * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>
      * created 2020/8/18
      */
-    public boolean expire(String key, long time) {
+    public static boolean expire(String key, long time) {
         try {
             if (time > 0) {
                 redisTemplate.expire(key, time, TimeUnit.SECONDS);
@@ -107,7 +118,7 @@ public class RedisUtil {
      * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>
      * created 2020/8/20
      */
-    public String get(String key) {
+    public static String get(String key) {
         if(StringUtils.isBlank(key)){
             return null;
         }
@@ -123,7 +134,7 @@ public class RedisUtil {
      * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>
      * created 2020/8/20
      */
-    public boolean set(String key, Object value) {
+    public static boolean set(String key, Object value) {
         try {
             redisTemplate.opsForValue().set(key, value);
             return true;
@@ -204,7 +215,7 @@ public class RedisUtil {
      * @param key 键
      * @return 对应的多个键值
      */
-    public Map<Object, Object> hmget(String key) {
+    public static Map<Object, Object> hmgetMap(String key) {
         return redisTemplate.opsForHash().entries(key);
     }
 
@@ -215,7 +226,7 @@ public class RedisUtil {
      * @param map 对应多个键值
      * @return true 成功 false 失败
      */
-    public boolean hmset(String key, Map<String, Object> map) {
+    public static boolean hmsetMap(String key, Map<String, Object> map) {
         try {
             redisTemplate.opsForHash().putAll(key, map);
             return true;
@@ -440,9 +451,25 @@ public class RedisUtil {
      * @param end   结束  0 到 -1代表所有值
      * @return
      */
-    public List<Object> lGet(String key, long start, long end) {
+    public List<Object> getList(String key, long start, long end) {
         try {
             return redisTemplate.opsForList().range(key, start, end);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * description: [获取List,所有数据, 暂时统一使用rightPop取值, 避免混乱使用, 影响效率]
+     * @param   key 键
+     * @return  List<Object>    所有数据
+     * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>
+     * created 2020/9/15
+     */
+    public static List<Object> getList(String key) {
+        try {
+            return (List<Object>)redisTemplate.opsForList().rightPop(key);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -455,7 +482,7 @@ public class RedisUtil {
      * @param key 键
      * @return
      */
-    public long lGetListSize(String key) {
+    public long getListSize(String key) {
         try {
             return redisTemplate.opsForList().size(key);
         } catch (Exception e) {
@@ -487,14 +514,8 @@ public class RedisUtil {
      * @param value 值
      * @return
      */
-    public boolean setList(String key, Object value) {
-        try {
-            redisTemplate.opsForList().rightPush(key, value);
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
+    public static boolean setList(String key, Object value) {
+        return setList(key, value, DEFAULT_TTL);
     }
 
     /**
@@ -505,10 +526,12 @@ public class RedisUtil {
      * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>
      * created 2020/8/20
      */
-    public boolean setList(String key, Object value, long time) {
+    public static boolean setList(String key, Object value, long time) {
         try {
             redisTemplate.opsForList().rightPush(key, value);
-            if (time > 0) expire(key, time);
+            if (time > 0){
+                expire(key, time);
+            }
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -524,13 +547,7 @@ public class RedisUtil {
      * created 2020/8/20
      */
     public boolean setList(String key, List<Object> value) {
-        try {
-            redisTemplate.opsForList().rightPushAll(key, value);
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
+        return setList(key, value, DEFAULT_TTL);
     }
 
     /**
@@ -541,10 +558,12 @@ public class RedisUtil {
      * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>
      * created 2020/8/20
      */
-    public boolean lSet(String key, List<Object> value, long time) {
+    public boolean setList(String key, List<Object> value, long time) {
         try {
             redisTemplate.opsForList().rightPushAll(key, value);
-            if (time > 0) expire(key, time);
+            if (time > 0){
+                expire(key, time);
+            }
             return true;
         } catch (Exception e) {
             e.printStackTrace();

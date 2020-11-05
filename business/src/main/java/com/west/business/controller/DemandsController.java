@@ -1,7 +1,9 @@
 package com.west.business.controller;
 
+import cn.afterturn.easypoi.excel.entity.ExportParams;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.west.business.pojo.pub.ResResult;
+import com.west.business.pojo.vo.demand.DemandInfoVO;
 import com.west.business.pojo.vo.demands.CreateDemandsVO;
 import com.west.business.pojo.vo.demands.DemandsVO;
 import com.west.business.pojo.vo.demands.QueryAllDemandVO;
@@ -11,6 +13,8 @@ import com.west.business.pojo.vo.demands.UpdateDemandsVO;
 import com.west.business.pojo.vo.page.PageVO;
 import com.west.business.service.demands.DemandsService;
 import com.west.business.util.NumberUtil;
+import com.west.business.util.date.DateUtils;
+import com.west.business.util.excel.ExcelUtil;
 import com.west.domain.entity.DemandInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -27,7 +31,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -126,4 +132,23 @@ public class DemandsController {
         int num = demandsService.deleteDemand(demandId);
         return ResResult.result(num > 0);
     }
+
+    /**
+     * description: [导出周报(新)
+     *  旧导出周报接口详见 {@link DemandController#demand(DemandInfoVO, HttpServletResponse)}
+     * ]
+     * @param qryVO     查询条件
+     * @param response  返回对象
+     * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>
+     * created 2020/9/14
+     */
+    @ApiOperation(value="导出周报excel(新)",notes="旧导出接口废弃后,使用此接口导出")
+    @GetMapping("/weekly")
+    public void exportWeeklyExcel(@ModelAttribute QueryAllDemandVO qryVO, HttpServletResponse response) {
+        List<DemandsVO> collect = null;// TODO 查询并包装数据
+        String fileName = "西北区全网组周报_"+ DateUtils.getSysDateyyyyMMdd();
+        ExportParams exportParams = ExcelUtil.defaultExportParams();
+        ExcelUtil.defaultExport(collect, DemandsVO.class, fileName, response, exportParams);
+    }
+
 }

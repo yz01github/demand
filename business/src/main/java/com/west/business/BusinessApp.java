@@ -13,7 +13,7 @@ import org.springframework.context.annotation.ComponentScan;
 // @EnableEurekaClient		// 将当前项目标记为客户端
 // @EnableFeignClients
 @ComponentScan(basePackages = {"com.west.business.config","com.west.business.controller",
-        "com.west.business.service"})
+        "com.west.business.service","com.west.business.util"})
 @MapperScan(value = "com.west.domain.dao")
 //@EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class})
 @SpringBootApplication
@@ -23,9 +23,4 @@ public class BusinessApp{
         SpringApplication.run(BusinessApp.class, args);
     }
 
-    class test{
-        @Getter
-        @Setter
-        private String name = "default";
-    }
 }

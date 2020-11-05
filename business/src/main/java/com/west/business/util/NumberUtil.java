@@ -62,11 +62,6 @@ public class NumberUtil {
         }
     }
 
-    @Test
-    public void test(){
-        between(1.2, 1, 2);
-    }
-
     /**
      * description: [判断指定数字是否不在某一区间,区间前闭后开]
      * @param value     需要判断的数字

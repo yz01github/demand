@@ -6,11 +6,11 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.PostConstruct;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -21,6 +21,7 @@ import java.util.List;
  * created 2020/9/8
  */
 @Slf4j
+@Lazy(false)
 @Component
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ConfigParamHelper {
@@ -30,10 +31,8 @@ public class ConfigParamHelper {
     @Autowired
     private ConfigParamService confParamServiceInit;
 
-    // 顺序： Constructor >> @Autowired >> @PostConstruct >> 静态方法, 所有Autowired完成后自动执行PostConstruct
     @PostConstruct
     public void init() {
-        log.debug("PostConstruct init confParamService="+confParamService);
         confParamService = this.confParamServiceInit;
     }
 
