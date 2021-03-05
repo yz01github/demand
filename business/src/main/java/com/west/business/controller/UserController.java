@@ -165,8 +165,8 @@ public class UserController {
     }
 
     @ApiOperation("查询单个用户")
-    @GetMapping("/one")
-    public ResResult<List<QueryUserVO>> searchByName(@NotBlank String name, HttpServletRequest request, HttpServletResponse response){
+    @GetMapping("/one/{name}")
+    public ResResult<List<QueryUserVO>> searchByName(@NotBlank @PathVariable String name, HttpServletRequest request, HttpServletResponse response){
         log.debug("当前是否登录:{}", testLogin(request, response));
         log.debug("当前登录用户:{}", request.getSession().getAttribute("userName"));
         QueryUserVO userVO = new QueryUserVO();

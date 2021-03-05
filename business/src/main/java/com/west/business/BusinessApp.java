@@ -4,10 +4,12 @@ import lombok.Getter;
 import lombok.Setter;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.web.bind.annotation.CrossOrigin;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 
 // @EnableEurekaClient		// 将当前项目标记为客户端
@@ -20,12 +22,22 @@ import org.springframework.context.annotation.ComponentScan;
 public class BusinessApp{
 	
     public static void main(String[] args){
+        // test();
         SpringApplication.run(BusinessApp.class, args);
     }
 
-    class test{
-        @Getter
-        @Setter
-        private String name = "default";
+    private static void test() {
+        LocalDateTime now = LocalDateTime.now();
+        try {
+            Thread.sleep(1L);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        LocalDateTime now1 = LocalDateTime.now().plusDays(11);
+        System.out.println(now);
+        System.out.println(now1);
+        Duration between = Duration.between(now1, now);
+        long toDays = between.toDays();
+        System.out.println(toDays);
     }
 }

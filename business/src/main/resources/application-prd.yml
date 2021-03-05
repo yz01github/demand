@@ -31,7 +31,7 @@ spring:
 
 
 server: 
-  port: 8082
+  port: 9091
 
 logging:
   level:
