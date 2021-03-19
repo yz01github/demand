@@ -219,7 +219,7 @@ public class DemandController {
                             .collect(Collectors.toSet());
         allNames.removeAll(inputUsers);
         String resStr = new StringBuilder("当前未录入周报的员工有:").append(allNames)
-                            .append("已录入的员工有:").append(inputUsers).toString();
+                            .append("\n已录入的员工有:").append(inputUsers).toString();
         return ResResult.successAddData(resStr);
     }
 
