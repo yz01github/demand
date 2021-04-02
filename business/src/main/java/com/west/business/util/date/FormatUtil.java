@@ -18,6 +18,17 @@ public class FormatUtil {
     public static final String TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
 
     public static final String DATE_PATTERN = "yyyy-MM-dd";
+
+    public static final String TIME_PATTERN_SHORT = "dd/MM/yy HH:mm:ss";
+    public static final String TIME_PATTERN_SHORT_1 = "yyyy/MM/dd HH:mm";
+    public static final String TIME_PATTERN_SHORT_2 = "yyyy年MM月dd日 HH:mm:ss";
+
+    public static final String TIME_PATTERN_D = "yyyyMMdd";
+    public static final String TIME_PATTERN_H = "yyyyMMddHH";
+    public static final String TIME_PATTERN_M = "yyyyMMddHHmm";
+    public static final String TIME_PATTERN_S = "yyyyMMddHHmmss";
+    public static final String TIME_PATTERN_MILLISECOND = "yyyyMMddHHmmssSSS";
+
     /**
      * SimpleDateFormat并不是线程安全的,因为在 SimpleDateFormat 中持有一个Calendar类对象在Parse 和Format方法时会调用calendar.setTime(date)方法,如果在多线程环境下运行,会出现线程安全问题
      * 解决方法之一:使用ThreadLocal初始化一个 SimpleDateFormat
@@ -28,18 +39,12 @@ public class FormatUtil {
      *     LocalDateTime.parse("2020-06-16 10:52:31", TIME_FORMATTER); // 字符转日期
      *</code>
      */
-    private static final DateTimeFormatter TIME_FORMATTER
-            = DateTimeFormatter.ofPattern(TIME_PATTERN);
-
-    private static final DateTimeFormatter DATE_FORMATTER
-            = DateTimeFormatter.ofPattern(DATE_PATTERN);
-
     // 本地电脑不行,懒加载一下
     public static DateTimeFormatter getTimeFormat(){
-        return TIME_FORMATTER;
+        return DateTimeFormatter.ofPattern(TIME_PATTERN);
     }
 
     public static DateTimeFormatter getDateFormat(){
-        return DATE_FORMATTER;
+        return DateTimeFormatter.ofPattern(DATE_PATTERN);
     }
 }

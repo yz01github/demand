@@ -1,7 +1,5 @@
 package com.west.business.config;
 
-import com.west.business.Intercept.BaseIntercept;
-import com.west.business.Intercept.login.LoginIntercept;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -45,11 +43,4 @@ public class InterceptorConfig extends WebMvcConfigurationSupport {
 
     }
 
-    @Bean
-    @Lazy(false)
-    public BaseIntercept getLoginIntercept(){
-        return null;
-        // 测试环境暂时注释
-        //return new LoginIntercept();
-    }
 }
