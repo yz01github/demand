@@ -39,7 +39,6 @@ public class FormatUtil {
      *     LocalDateTime.parse("2020-06-16 10:52:31", TIME_FORMATTER); // 字符转日期
      *</code>
      */
-    // 本地电脑不行,懒加载一下
     public static DateTimeFormatter getTimeFormat(){
         return DateTimeFormatter.ofPattern(TIME_PATTERN);
     }

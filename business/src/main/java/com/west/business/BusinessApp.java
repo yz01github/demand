@@ -12,7 +12,10 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 import java.time.LocalDateTime;
-
+import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 // @EnableEurekaClient		// 将当前项目标记为客户端
 // @EnableFeignClients
@@ -25,9 +28,41 @@ public class BusinessApp{
 	
     public static void main(String[] args){
         // test();
+        //test1();
+//        test2();
+
         SpringApplication.run(BusinessApp.class, args);
     }
 
+    private static void test1() {
+        Integer a = 121;
+        Integer b = 121;
+        boolean res = (a==b);
+
+
+        System.out.println(res);
+        long c = 100L;
+        long d = 100L;
+        boolean res2 = (c==d);
+        System.out.println(res2);
+
+    }
+    private static void test2() {
+        String tradeEparchCode = humpToLine("tradeEparchCode", false);
+        System.out.println(tradeEparchCode);
+    }
+    public static String humpToLine(String str, boolean optimization) {
+        if (!optimization) {
+            return str.replaceAll("[A-Z]", "_$0").toUpperCase();
+        }
+        Matcher matcher = Pattern.compile("[A-Z]").matcher(str);
+        StringBuffer sb = new StringBuffer();
+        while (matcher.find()) {
+            matcher.appendReplacement(sb, "_" + matcher.group(0).toLowerCase());
+        }
+        matcher.appendTail(sb);
+        return sb.toString().toUpperCase();
+    }
     private static void test() {
         LocalDateTime now = LocalDateTime.now();
         try {

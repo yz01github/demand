@@ -1,6 +1,5 @@
 package com.west.business.controller.demo;
 
-import com.west.business.util.gongsi.TimeUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
@@ -21,7 +20,5 @@ public class TestDemo {
     }
 
     private static void timeTest() {
-        LocalDateTime localDateTime = TimeUtil.foreverTime();
-        log.debug("{}",localDateTime);
     }
 }
