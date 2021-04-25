@@ -80,4 +80,56 @@ public class CommonStrUtil {
         }
         return end > str.length() ? str.substring(begin) : str.substring(begin, end);
     }
+
+    public static List<String> stringSubsection(String source, int byteLength) {
+        if (source != null && source.length() != 0) {
+            byte[] sByte = source.getBytes();
+            char[] sChar = source.toCharArray();
+            List<String> dataset = new ArrayList();
+            if (sByte.length <= byteLength) {
+                dataset.add(source);
+            } else {
+                int byleCount = 0;
+                int first = 0;
+
+                for(int i = 0; i < sChar.length; ++i) {
+                    if (sChar[i] > 128) {
+                        byleCount += 2;
+                    } else {
+                        ++byleCount;
+                    }
+
+                    if (byleCount == byteLength) {
+                        if (first == 0) {
+                            dataset.add(new String(sChar, first, i + 1));
+                        } else {
+                            dataset.add(new String(sChar, first + 1, i - first));
+                        }
+
+                        first = i;
+                        byleCount = 0;
+                    }
+
+                    if (byleCount == byteLength + 1) {
+                        if (first == 0) {
+                            dataset.add(new String(sChar, first, i));
+                        } else {
+                            dataset.add(new String(sChar, first + 1, i - first - 1));
+                        }
+
+                        first = i - 1;
+                        byleCount = 2;
+                    }
+                }
+
+                if (byleCount != 0) {
+                    dataset.add(new String(sChar, first + 1, sChar.length - first - 1));
+                }
+            }
+
+            return dataset;
+        } else {
+            return new ArrayList();
+        }
+    }
 }
