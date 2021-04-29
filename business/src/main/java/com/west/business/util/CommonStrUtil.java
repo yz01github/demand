@@ -59,7 +59,7 @@ public class CommonStrUtil {
         }
         List<String> list = new ArrayList<String>();
         for (int index = 0; index < size; index++) {
-            String childStr = substring(paramStr, index * subLength,(index + 1) * subLength);
+            String childStr = subString(paramStr, index * subLength,(index + 1) * subLength);
             list.add(childStr);
         }
         return list;
@@ -74,62 +74,69 @@ public class CommonStrUtil {
      * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>
      * created 2021/3/17
      */
-    public static String substring(String str, int begin, int end) {
+    public static String subString(String str, int begin, int end) {
         if (begin > str.length()){
             return "";
         }
         return end > str.length() ? str.substring(begin) : str.substring(begin, end);
     }
 
+    /**
+     * description: [支持]
+     * @param
+     * @return
+     * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>
+     * created 2021/4/28
+     */
     public static List<String> stringSubsection(String source, int byteLength) {
-        if (source != null && source.length() != 0) {
-            byte[] sByte = source.getBytes();
-            char[] sChar = source.toCharArray();
-            List<String> dataset = new ArrayList();
-            if (sByte.length <= byteLength) {
-                dataset.add(source);
-            } else {
-                int byleCount = 0;
-                int first = 0;
-
-                for(int i = 0; i < sChar.length; ++i) {
-                    if (sChar[i] > 128) {
-                        byleCount += 2;
-                    } else {
-                        ++byleCount;
-                    }
-
-                    if (byleCount == byteLength) {
-                        if (first == 0) {
-                            dataset.add(new String(sChar, first, i + 1));
-                        } else {
-                            dataset.add(new String(sChar, first + 1, i - first));
-                        }
-
-                        first = i;
-                        byleCount = 0;
-                    }
-
-                    if (byleCount == byteLength + 1) {
-                        if (first == 0) {
-                            dataset.add(new String(sChar, first, i));
-                        } else {
-                            dataset.add(new String(sChar, first + 1, i - first - 1));
-                        }
-
-                        first = i - 1;
-                        byleCount = 2;
-                    }
-                }
-
-                if (byleCount != 0) {
-                    dataset.add(new String(sChar, first + 1, sChar.length - first - 1));
-                }
-            }
-
-            return dataset;
-        } else {
+        if(source == null || source.length() == 0){
             return new ArrayList();
         }
+        byte[] byteArr = source.getBytes();
+        char[] charArr = source.toCharArray();
+        if (byteArr.length <= byteLength) {
+            return Arrays.asList(source);
+        }
+        List<String> result = new ArrayList();
+        // 字节计数变量, ==byteLength或 ==byteLength+1 时分割
+        int byleCount = 0;
+        int first = 0;
+
+        for(int i = 0; i < charArr.length; ++i) {
+            if (charArr[i] > 128) {
+                byleCount += 2;
+            } else {
+                ++byleCount;
+            }
+
+            if (byleCount == byteLength) {
+                if (first == 0) {
+                    result.add(new String(charArr, first, i + 1));
+                } else {
+                    result.add(new String(charArr, first + 1, i - first));
+                }
+                // 重置截取起始位置first, 重置字节计数变量byleCount
+                first = i;
+                byleCount = 0;
+            }
+
+
+
+            if (byleCount == byteLength + 1) {
+                if (first == 0) {
+                    result.add(new String(charArr, first, i));
+                } else {
+                    result.add(new String(charArr, first + 1, i - 1 - first ));
+                }
+                // 重置时，前移1字节, 当临界字符为2字节时，不截取该字符，避免超长，此时截取的长度为 byteLength-1
+                first = i - 1;
+                byleCount = 2;
+            }
+        }
+
+        if (byleCount != 0) {
+            result.add(new String(charArr, first + 1, charArr.length - first - 1));
+        }
+        return result;
     }
 }

@@ -8,17 +8,22 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
 import javax.validation.constraints.NotBlank;
+import java.io.UnsupportedEncodingException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -27,6 +32,7 @@ import java.util.stream.Collectors;
 
 // @EnableEurekaClient		// 将当前项目标记为客户端
 // @EnableFeignClients
+@EnableCaching
 @ComponentScan(basePackages = {"com.west.business.config","com.west.business.controller",
         "com.west.business.service"})
 @MapperScan(value = "com.west.domain.dao")
@@ -34,15 +40,23 @@ import java.util.stream.Collectors;
 @SpringBootApplication
 public class BusinessApp{
 	
-    public static void main(String[] args){
+    public static void main(String[] args) throws UnsupportedEncodingException {
         // test();
         //test1();
 //        test2();
         // test3();
-        // test4();
-         test5();
+         //test4();
+         //test5();
 
-        //SpringApplication.run(BusinessApp.class, args);
+        ConfigurableApplicationContext context = SpringApplication.run(BusinessApp.class, args);
+        ConfigurableListableBeanFactory beanFactory = context.getBeanFactory();
+        Iterator<String> iterator = beanFactory.getBeanNamesIterator();
+        while (iterator.hasNext()){
+            String next = iterator.next();
+            System.out.println(next);
+        }
+        System.out.println("aaa");
+        System.out.println("bbb");
     }
 
     private static void test5() {
@@ -50,23 +64,18 @@ public class BusinessApp{
         System.out.println(res);
     }
 
-    private static void test4() {
+    private static void test4() throws UnsupportedEncodingException {
         CreateUserVO createUserVO = new CreateUserVO();
-        String string = new String("[\"{\"IN_MODE_CODE\":\"6\",\"ACCESSTOKEN\":\"20210507191805c787f5ed456544e99630f492534319f4-0238-1617794285\",\"OPR_TIME\":\"20210421084122\",\"X_RSPTYPE\":\"2\",\"TMSISDN\":\"\",\"PROVINCE_CODE\":\"971\",\"TIMESTAMP\":\"20210421084122\",\"SIGN\":\"8DDC3A749EFECC131EF6397C70B4D48A\",\"SIGNMETHOD\":\"md5\",\"X_RESULTCODE\":\"\",\"BIZ_CODE\":\"698039020100000117\",\"CHARGE_TYPE\":\"3\",\"SPID\":\"698039\",\"BIPCODE\":\"synBizOrder\",\"EXTEND_INFO\":[{\"INFO_VALUE\":\"0030018\",\"INFO_CODE\":\"ChannelCode\"}],\"X_RSPDESC\":\"\",\"TRADE_STAFF_ID\":\"IBOSS000\",\"TESTFLAG\":\"1\",\"CutOffDay\":\"20210421\",\"BRAND\":\"\",\"BIPVER\":\"0100\",\"transIDO\":\"MIGU202104210841220000323422\",\"CHANNEL\":\"13\",\"OPER_NUMB\":\"MIGU202104210841220000323422\",\"TRADE_EPARCHY_CODE\":\"INTF\",\"ENVFLAG\":\"1\",\"TransIDO\":\"MIGU202104210841220000323422\",\"TRADE_CITY_CODE\":\"INTF\",\"TRADE_DEPART_ID\":\"00087\",\"cutOffDay\":\"20210421\",\"DOMAIN\":\"COP\",\"SESSIONID\":\"MIGU202104210841220000323422\",\"ROUTEVALUE\":\"13709741069\",\"ROUTETYPE\":\"01\",\"ACTIVITYCODE\":\"bizOrder\",\"X_TRANS_CODE\":\"SS.PlatRegSVC.tradeRegIntf\",\"OPR_SOURCE\":\"13\",\"X_RSPCODE\":\"\",\"ID_TYPE\":\"01\",\"SERIAL_NUMBER\":\"13709741069\",\"BUSI_TYPE\":\"MIGU\",\"BUSI_SIGN\":\"synBizOrder_bizOrder_1_0\",\"KIND_ID\":\"synBizOrder_bizOrder_1_0\",\"IMSI\":\"\",\"BIZ_TYPE_CODE\":\"81\",\"X_RESULTINFO\":\"\",\"KIND_ID_NEW\":\"synBizOrder_1.0.1_MIGU_1\",\"SERVICEPACKNAME\":\"\",\"ORIGDOMAIN\":\"MIGU\",\"OPER_CODE\":\"01\",\"EFFT_TIME\":\"20210421084122\",\"CUTOFFDAY\":\"20210421\",\"BUSITYPE\":\"MIGU\",\"USERPARTYID\":\"MIGU2500\",\"SVCCONTVER\":\"0100\",\"ACTIONCODE\":\"0\",\"TRANSIDO\":\"MIGU202104210841220000323422\",\"HOMEDOMAIN\":\"BOSS\",\"VERSION\":\"1.0.1\",\"APICODE\":\"\"}\"]");
-        List<String> acceptDataset = CommonStrUtil.stringSubsection(string, 4000);
+        byte[] strGBK = "UTF8编码".getBytes("UTF-8");
+        byte[] strGB2312 = "UTF8编码".getBytes("GB2312");
+        String str = new String(strGBK, "UTF-8");
+        String str2 = new String(strGBK, "GB2312");
+        System.out.println(str2.equals(str));
 
+        String string = new String("[\"{\"IN_MODE_CODE\":\"6\",\"ACCESSTOKEN\":\"20210507191805c787f5ed456544e99630f492534319f4-0238-1617794285\",\"OPR_TIME\":\"20210421084122\",\"X_RSPTYPE\":\"2\",\"TMSISDN\":\"\",\"PROVINCE_CODE\":\"971\",\"TIMESTAMP\":\"20210421084122\",\"SIGN\":\"8DDC3A749EFECC131EF6397C70B4D48A\",\"SIGNMETHOD\":\"md5\",\"X_RESULTCODE\":\"\",\"BIZ_CODE\":\"698039020100000117\",\"CHARGE_TYPE\":\"3\",\"SPID\":\"698039\",\"BIPCODE\":\"synBizOrder\",\"EXTEND_INFO\":[{\"INFO_VALUE\":\"这玩意儿用来测试\",\"INFO_CODE\":\"ChannelCode\"}],\"X_RSPDESC\":\"\",\"TRADE_STAFF_ID\":\"IBOSS000\",\"TESTFLAG\":\"1\",\"CutOffDay\":\"20210421\",\"BRAND\":\"\",\"BIPVER\":\"0100\",\"transIDO\":\"MIGU202104210841220000323422\",\"CHANNEL\":\"13\",\"OPER_NUMB\":\"MIGU202104210841220000323422\",\"TRADE_EPARCHY_CODE\":\"INTF\",\"ENVFLAG\":\"1\",\"TransIDO\":\"MIGU202104210841220000323422\",\"TRADE_CITY_CODE\":\"INTF\",\"TRADE_DEPART_ID\":\"00087\",\"cutOffDay\":\"20210421\",\"DOMAIN\":\"COP\",\"SESSIONID\":\"MIGU202104210841220000323422\",\"ROUTEVALUE\":\"13709741069\",\"ROUTETYPE\":\"01\",\"ACTIVITYCODE\":\"bizOrder\",\"X_TRANS_CODE\":\"SS.PlatRegSVC.tradeRegIntf\",\"OPR_SOURCE\":\"13\",\"X_RSPCODE\":\"\",\"ID_TYPE\":\"01\",\"SERIAL_NUMBER\":\"13709741069\",\"BUSI_TYPE\":\"MIGU\",\"BUSI_SIGN\":\"synBizOrder_bizOrder_1_0\",\"KIND_ID\":\"synBizOrder_bizOrder_1_0\",\"IMSI\":\"\",\"BIZ_TYPE_CODE\":\"81\",\"X_RESULTINFO\":\"\",\"KIND_ID_NEW\":\"synBizOrder_1.0.1_MIGU_1\",\"SERVICEPACKNAME\":\"\",\"ORIGDOMAIN\":\"MIGU\",\"OPER_CODE\":\"01\",\"EFFT_TIME\":\"20210421084122\",\"CUTOFFDAY\":\"20210421\",\"BUSITYPE\":\"MIGU\",\"USERPARTYID\":\"MIGU2500\",\"SVCCONTVER\":\"0100\",\"ACTIONCODE\":\"0\",\"TRANSIDO\":\"MIGU202104210841220000323422\",\"HOMEDOMAIN\":\"BOSS\",\"VERSION\":\"1.0.1\",\"APICODE\":\"\"}\"]");
+        List<String> acceptDataset = CommonStrUtil.stringSubsection(string, 300);
 
-// 标记为普通接口
-        for (int i = 0; i < acceptDataset.size(); i++) {
-            switch (i) {
-                case 0:
-                    createUserVO.setUserAccount(acceptDataset.get(i));
-                    break;
-                default:
-                    break;
-            }
-        }
-        System.out.println(createUserVO);
+        System.out.println(acceptDataset);
     }
 
 

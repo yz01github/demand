@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,10 +48,25 @@ public class DemoController {
 	private DemoService demoService;
 
 	@ApiIgnore
-	@GetMapping("/{str}")
+    @Cacheable("TEST_CACHE")
+	@GetMapping("/test/{str}")
 	public String test(@PathVariable String str, HttpServletRequest request) {
-		return demoService.demoRequest(str + request.getRequestURI());
+        String demoRequest = demoService.demoRequest(str + request.getRequestURI());
+        return str+request.getRequestURI();
 	}
+
+    @ApiIgnore
+    @Cacheable(value = "TEST_CACHE_2", key = "#str")
+    @GetMapping("/test2/{str}")
+    public String test2(@PathVariable String str, HttpServletRequest request) {
+        String demoRequest = demoService.demoRequest(str + request.getRequestURI());
+        return str+"_2_"+request.getRequestURI();
+    }
+    @ApiOperation(value = "查看运行环境", notes = "查看当前所运行的环境(dev/prd/pre/test)")
+    @GetMapping("/runtimeSystem")
+    public ResResult<String> lookNowSys() {
+        return ResResult.successAddData(profilesActive);
+    }
 
 	@ApiIgnore
 	@ApiOperation(value = "作用:接收多条数据", notes = "info备注")
@@ -62,11 +78,6 @@ public class DemoController {
 		return null;
 	}
 
-    @ApiOperation(value = "查看运行环境", notes = "查看当前所运行的环境(dev/prd/pre/test)")
-    @GetMapping("/runtimeSystem")
-    public ResResult<String> lookNowSys() {
-        return ResResult.successAddData(profilesActive);
-    }
 
 	public String aopTest(String str) {
 		log.debug("aopTest:{}", str);
