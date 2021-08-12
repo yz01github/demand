@@ -2,7 +2,6 @@ package com.west.business.controller;
 
 import cn.afterturn.easypoi.excel.entity.ExportParams;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.google.common.base.Objects;
 import com.west.business.consts.CommonConsts;
 import com.west.business.pojo.pub.ResResult;
 import com.west.business.pojo.pub.convert.ConvertYN;
@@ -10,7 +9,10 @@ import com.west.business.pojo.vo.demand.DemandInfoVO;
 import com.west.business.pojo.vo.demand.SearchDemandVO;
 import com.west.business.pojo.vo.demand.UpdateDemandVO;
 import com.west.business.pojo.vo.page.PageVO;
+import com.west.business.pojo.vo.user.QueryUserVO;
 import com.west.business.service.demand.DemandService;
+import com.west.business.service.user.UserService;
+import com.west.business.util.date.DateUtils;
 import com.west.business.util.excel.ColorsStyle;
 import com.west.business.util.excel.ExcelUtil;
 import com.west.domain.entity.DemandInfo;
@@ -18,7 +20,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -33,18 +34,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -63,11 +61,14 @@ public class DemandController {
     @Autowired
     private DemandService demandService;
 
+    @Autowired
+    private UserService userService;
+
 
     @ApiOperation(value="录入",notes="录入周报记录")
     @PostMapping("/infos")
     @ResponseBody
-    public ResResult<Integer> putInfo(/*@ModelAttribute*/ @RequestBody @Valid DemandInfoVO demandInfoVO) {
+    public ResResult<Integer> putInfo(@ModelAttribute /*@RequestBody*/ @Valid DemandInfoVO demandInfoVO) {
         log.debug("demandInfoVO;{}", demandInfoVO);
         String isOver = demandInfoVO.getIsOver();
         List<String> viewYN = Arrays.asList(CommonConsts.VIEW_Y, CommonConsts.VIEW_N);
@@ -75,9 +76,6 @@ public class DemandController {
             return ResResult.failAddMessage("录入失败,请填写正确的\"是否上线\"数据;[是 or 否]!");
         }
         String releaseSuccess = demandInfoVO.getReleaseSuccess();
-        if(!viewYN.contains(releaseSuccess)){
-            return ResResult.failAddMessage("录入失败,请填写正确的\"上线是否成功\"数据;[是 or 否]!");
-        }
         if(CommonConsts.VIEW_Y.equals(isOver) && !viewYN.contains(releaseSuccess)){
             return ResResult.failAddMessage("上线后必须输入\"上线结果\"[是 or 否]!");
         }
@@ -117,6 +115,10 @@ public class DemandController {
     private void replaceValue(DemandInfoVO demandInfoVO) {
         demandInfoVO.setIsOver(ConvertYN.convert(demandInfoVO.getIsOver(),false));
         demandInfoVO.setReleaseSuccess(ConvertYN.convert(demandInfoVO.getReleaseSuccess(),false));
+        String relatedModules = demandInfoVO.getRelatedModules();
+        if(StringUtils.isNotBlank(relatedModules)){
+            demandInfoVO.setRelatedModules(relatedModules.toUpperCase());
+        }
     }
 
     @ResponseBody
@@ -125,7 +127,7 @@ public class DemandController {
     public void demand(SearchDemandVO searchVO, PageVO<DemandInfo> pageVO, HttpServletResponse response) throws IOException {
         IPage<DemandInfoVO> iPage = demandService.qryAll(searchVO, pageVO);
         List<DemandInfoVO> collect = iPage.getRecords();
-        ExportParams exportParams = ExcelUtil.getDefaultExportParams();
+        ExportParams exportParams = getExportParams();
         ExcelUtil.defaultExport(collect, DemandInfoVO.class, "fileNameYZ", response, exportParams);
         log.debug("end...");
     }
@@ -135,10 +137,16 @@ public class DemandController {
     @GetMapping("/fileToday")
     public void demand(DemandInfoVO queryVO, HttpServletResponse response) {
         List<DemandInfoVO> collect = demandService.qryExcelData(queryVO);
-        ExportParams exportParams = ExcelUtil.getDefaultExportParams();
-        ExcelUtil.defaultExport(collect, DemandInfoVO.class, "fileNameYZ", response, exportParams);
+        ExportParams exportParams = getExportParams();
+        ExcelUtil.defaultExport(collect, DemandInfoVO.class, "西北区全网组周报_"+ DateUtils.getSysDateyyyyMMdd(),
+                response, exportParams);
         log.debug("end...");
     }
+
+    private ExportParams getExportParams(){
+        return ExcelUtil.defaultExportParams();
+    }
+
 
     @ApiOperation(value="查询记录",notes="查询所有未逻辑删除的已有数据")
     @ApiImplicitParams({
@@ -191,6 +199,28 @@ public class DemandController {
         demandInfoVO.setReleaseSuccess(ConvertYN.convert(demandInfoVO.getReleaseSuccess(),false));
         int num = demandService.updateDemand(demandInfoVO);
         return ResResult.successAddData(num);
+    }
+
+    @ApiOperation(value="录入(ModelAttribute)",notes="录入周报记录")
+    @PostMapping("/input")
+    @ResponseBody
+    public ResResult<Integer> inputInfo(@ModelAttribute @Valid DemandInfoVO demandInfoVO) {
+        return putInfo(demandInfoVO);
+    }
+
+    @ApiOperation(value="查询未录入周报员工",notes="查询未录入周报员工")
+    @GetMapping("/noInputUser")
+    @ResponseBody
+    public ResResult qryInput(){
+        List<QueryUserVO> userVOS = userService.qryAll();
+        List<String> allNames = userVOS.stream().map(QueryUserVO::getUserName).collect(Collectors.toList());
+        List<DemandInfoVO> infoVOS = demandService.qryExcelData(new DemandInfoVO());
+        Set<String> inputUsers = infoVOS.stream().map(DemandInfoVO::getDemandOwner)
+                            .collect(Collectors.toSet());
+        allNames.removeAll(inputUsers);
+        String resStr = new StringBuilder("当前未录入周报的员工有:").append(allNames)
+                            .append("\n已录入的员工有:").append(inputUsers).toString();
+        return ResResult.successAddData(resStr);
     }
 
     @ApiOperation(value="删除",notes="删除已录入的周报记录")

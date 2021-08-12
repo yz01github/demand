@@ -44,6 +44,9 @@ public class DemandInfo extends BaseEntity {
     private LocalDate devEndTime;
 
     // 开发进度
+    private String functionPoint;
+
+    // 开发进度
     private String devProgress;
 
     // 是否上线,0否1是

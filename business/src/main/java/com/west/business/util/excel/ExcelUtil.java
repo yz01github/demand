@@ -34,11 +34,11 @@ import java.util.NoSuchElementException;
 public class ExcelUtil {
 
     /**
-     * description: [基本的excel格式,靛蓝标题,行高7]
+     * description: [默认导出Excel格式参数]
      * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>
-     * created 2020/8/12
+     * created 2020/9/14
      */
-    public static ExportParams getDefaultExportParams(){
+    public static ExportParams defaultExportParams(){
         ExportParams exportParams = new ExportParams();
         exportParams.setHeight((short) 7);
         exportParams.setTitleHeight((short)7);
@@ -56,6 +56,14 @@ public class ExcelUtil {
         downLoadExcel(fileName, response, workbook);
     }
 
+    /**
+     * description: [导出excel]
+     * @param   fileName    文件名
+     * @param   response    返回对象
+     * @param   workbook    数据对象
+     * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>
+     * created 2020/9/15
+     */
     private static void downLoadExcel(String fileName, HttpServletResponse response, Workbook workbook) {
         response.setCharacterEncoding("UTF-8");
         response.setHeader("content-Type", "application/vnd.ms-excel");
@@ -73,6 +81,11 @@ public class ExcelUtil {
         downLoadExcel(fileName, response, workbook);
     }
 
+    /**
+     * description: [导入excel]
+     * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>
+     * created 2020/9/15
+     */
     public static <T> List<T> importExcel(String filePath,Integer titleRows,Integer headerRows, Class<T> pojoClass){
         if (StringUtils.isBlank(filePath)){
             return null;
@@ -91,6 +104,17 @@ public class ExcelUtil {
         }
         return list;
     }
+
+    /**
+     * description: [导入excel]
+     * @param   file    文件
+     * @param   titleRows    标题所在行
+     * @param   headerRows   表头所在行
+     * @param   pojoClass    解析实体类
+     * @return
+     * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>
+     * created 2020/9/15
+     */
     public static <T> List<T> importExcel(MultipartFile file, Integer titleRows, Integer headerRows, Class<T> pojoClass){
         if (file == null){
             return null;

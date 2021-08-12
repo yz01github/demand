@@ -29,7 +29,6 @@ spring:
   thymeleaf:
     prefix: classpath:htmls/
 
-
 server: 
   port: 9091
 

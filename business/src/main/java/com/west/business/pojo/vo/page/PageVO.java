@@ -1,6 +1,7 @@
 package com.west.business.pojo.vo.page;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
@@ -13,8 +14,12 @@ import lombok.Data;
 @Data
 public class PageVO<T> {
 
+    // 需求负责人(用户id)
+    @ApiModelProperty(value = "需求页码")
     private long pageNum;
 
+    // 需求负责人(用户id)
+    @ApiModelProperty(value = "每页数量")
     private long pageSize;
 
     public Page getPage(){

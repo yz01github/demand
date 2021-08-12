@@ -2,10 +2,15 @@ package com.west.business.pojo.vo.demand;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+
 
 /**
  * description: [查询VO]
@@ -14,7 +19,9 @@ import java.time.LocalDateTime;
  * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>
  * created 2020/7/23
  */
-@Data
+@Getter
+@Setter
+@ToString
 public class SearchDemandVO extends DemandInfoVO {
     // 需求名称
     @ApiModelProperty(value = "需求名")

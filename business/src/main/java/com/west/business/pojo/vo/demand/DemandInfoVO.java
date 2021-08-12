@@ -1,31 +1,27 @@
 package com.west.business.pojo.vo.demand;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
-import cn.afterturn.easypoi.excel.annotation.ExcelTarget;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.west.domain.entity.base.BaseEntity;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.springframework.format.annotation.DateTimeFormat;
-import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
 /**
  * description: [展示VO]
  * title: DemandInfo
- *
  * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>
  * created 2020/7/17
  */
-@Data
+@Getter
+@Setter
+@ToString
 public class DemandInfoVO {
 
     // 需求名称
@@ -72,46 +68,51 @@ public class DemandInfoVO {
     @Excel(name = "开发完成时间", format = "yyyy-MM-dd", orderNum = "6", width = 15.0)
     private LocalDate devEndTime;
 
+    // 功能点
+    @ApiModelProperty(value = "功能点")
+    @Excel(name = "功能点", orderNum = "7", type = 1, suffix = "%")
+    private String functionPoint;
+
     // 开发进度
     @NotBlank
     @ApiModelProperty(value = "开发进度, 请填入0-100整数")
-    @Excel(name = "开发进度", orderNum = "7", type = 1, suffix = "%")
+    @Excel(name = "开发进度", orderNum = "8", type = 1, suffix = "%")
     private String devProgress;
 
     // 是否上线,0否1是
     @Size(max = 1)
     @NotBlank
     @ApiModelProperty(value = "是否上线,填写:是 or 否")
-    @Excel(name = "是否上线", replace = {"否_0", "是_1"}, orderNum = "8")
+    @Excel(name = "是否上线", replace = {"否_0", "是_1"}, orderNum = "9")
     private String isOver;
 
     // 上线是否成功,0否1是
     @ApiModelProperty(value = "上线是否成功,填写:是 or 否")
-    @Excel(name = "上线是否成功", replace = {"否_0", "是_1"}, orderNum = "9", width = 15.0)
+    @Excel(name = "上线是否成功", replace = {"否_0", "是_1","_null"}, orderNum = "10", width = 15.0)
     private String releaseSuccess;
 
     // 失败原因  
     @ApiModelProperty(value = "失败原因")
-    @Excel(name = "失败原因", orderNum = "10")
+    @Excel(name = "失败原因", orderNum = "11")
     private String failedCause;
 
     // 跟踪时间
     @NotNull
     @DateTimeFormat(pattern="yyyy-MM-dd")
     @ApiModelProperty(value = "跟踪时间,格式:yyyy-MM-dd")
-    @Excel(name = "跟踪时间", format = "yyyy-MM-dd", orderNum = "11", width = 15.0)
+    @Excel(name = "跟踪时间", format = "yyyy-MM-dd", orderNum = "12", width = 15.0)
     private LocalDate trackTime;
 
     // 实际工作量
     @Size(max = 3)
     @ApiModelProperty(value = "实际工作量,格式:请填入0-100整数")
-    @Excel(name = "实际工作量", orderNum = "12", width = 15.0, type = 10)
+    @Excel(name = "实际工作量", orderNum = "13", width = 15.0, type = 10)
     private String actualWork;
 
     // 省份
     @NotBlank
     @ApiModelProperty(value = "省份,格式:青海 or 陕西")
-    @Excel(name = "省份",  replace = {"青海_0971", "陕西_0029"}, orderNum = "13")
+    @Excel(name = "省份",  replace = {"青海_0971", "陕西_0029"}, orderNum = "14")
     private String provName;
 
     // 需求唯一标识

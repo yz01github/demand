@@ -132,6 +132,7 @@
 	<modules>
 	<module>domain</module>
     <module>business</module>
+	<module>aet</module>
 	<!-- 高可用服务暂时用不到,但该模块代码是可用的 -->
     <module>eureka1</module>
 	<!-- 资源问题,负载均衡咱不具备条件, 同上,代码可用 -->

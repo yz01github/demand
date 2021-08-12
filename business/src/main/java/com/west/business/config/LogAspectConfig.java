@@ -1,20 +1,12 @@
 package com.west.business.config;
 
-import com.west.business.util.GeneratorUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.connector.Request;
-import org.apache.catalina.connector.RequestFacade;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
-import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
-import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
-import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -22,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 
 /**
- * description: [日志切面配置]
+ * description: []
  * title: LogAspectConfig
  *
  * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>
@@ -35,6 +27,10 @@ import java.util.Arrays;
 public class LogAspectConfig {
 
     private static HttpServletRequest BLANK_REQUEST = new RequestFacade(new Request());
+
+    public int getOrder() {
+        return 10;// 切面优先级,越小越优先
+    }
 
 
     // com.west.business.controller包下所有 *Mapping标注的方法
@@ -120,5 +116,10 @@ public class LogAspectConfig {
         log.info("请求finally log");
     }*/
 
-
+    // 获取请求对象
+    private HttpServletRequest getRequest(){
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        HttpServletRequest request = attributes.getRequest();
+        return request;
+    }
 }

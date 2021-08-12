@@ -21,4 +21,10 @@ public class CommonConsts {
     // 对应 CODE_N
     public static final String VIEW_N = "否";
 
+    // 系统编码
+    public static final String SYS_CODE = "DMP";
+
+    // 需求进度节点CONFIG配置
+    public static final String NODE_CONF = "DEMAND_NEXT_STATE_CONF";
+
 }

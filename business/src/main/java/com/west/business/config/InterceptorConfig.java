@@ -1,5 +1,7 @@
 package com.west.business.config;
 
+import com.west.business.Intercept.BaseIntercept;
+import com.west.business.Intercept.login.LoginIntercept;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,7 +13,7 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
 /**
- * description: [拦截器注册配置]
+ * description: []
  * title: InterceptorConfig
  *
  * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>
@@ -24,14 +26,14 @@ public class InterceptorConfig extends WebMvcConfigurationSupport {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         // addPathPatterns(用于添加拦截规则);excludePathPatterns(用户排除拦截)
-        /* // 功能(菜单)权限拦截器, 兼顾处理了登录拦截功能
-        BaseIntercept intercept = getLoginIntercept();
-        log.debug("InterceptorConfig.addInterceptors;intercept addPaths:{},excludePaths:{}"
-            , intercept.getAddPaths(), intercept.getExcludePaths());
-        registry.addInterceptor(intercept)
-                .excludePathPatterns(intercept.getExcludePaths())
-                .addPathPatterns(intercept.getAddPaths());
-                */
+        //*registry.addInterceptor(new MyInterceptor1()).addPathPatterns("/**");
+//        BaseIntercept intercept = getLoginIntercept();
+//        log.debug("InterceptorConfig.addInterceptors;intercept addPaths:{},excludePaths:{}"
+//            , intercept.getAddPaths(), intercept.getExcludePaths());
+//        // 功能(菜单)权限拦截器, 兼顾处理了登录拦截功能
+//        registry.addInterceptor(intercept)
+//                .excludePathPatterns(intercept.getExcludePaths())
+//                .addPathPatterns(intercept.getAddPaths());
     }
 
     @Override
@@ -43,4 +45,9 @@ public class InterceptorConfig extends WebMvcConfigurationSupport {
 
     }
 
+    @Bean
+    @Lazy(false)
+    public BaseIntercept getLoginIntercept(){
+        return new LoginIntercept();
+    }
 }
