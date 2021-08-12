@@ -8,6 +8,7 @@ import java.util.Vector;
 
 import com.west.business.pojo.pub.ResResult;
 import com.west.business.service.demo.DemoService;
+import com.west.business.util.ClassUtils;
 import com.west.domain.entity.User;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -47,7 +48,6 @@ public class DemoController {
 	@Autowired
 	private DemoService demoService;
 
-	@ApiIgnore
     @Cacheable("TEST_CACHE")
 	@GetMapping("/test/{str}")
 	public String test(@PathVariable String str, HttpServletRequest request) {
@@ -55,27 +55,32 @@ public class DemoController {
         return str+request.getRequestURI();
 	}
 
-    @ApiIgnore
     @Cacheable(value = "TEST_CACHE_2", key = "#str")
     @GetMapping("/test2/{str}")
     public String test2(@PathVariable String str, HttpServletRequest request) {
         String demoRequest = demoService.demoRequest(str + request.getRequestURI());
         return str+"_2_"+request.getRequestURI();
     }
-    @ApiOperation(value = "查看运行环境", notes = "查看当前所运行的环境(dev/prd/pre/test)")
-    @GetMapping("/runtimeSystem")
-    public ResResult<String> lookNowSys() {
-        return ResResult.successAddData(profilesActive);
+
+    @GetMapping("/class/reload")
+    public String reloadClass(String clazzName, HttpServletRequest request) throws Exception {
+        log.debug("进入："+request.getRequestURI());
+        ClassUtils.reloadClass();
+        return clazzName+"_3_"+request.getRequestURI();
     }
 
-	@ApiIgnore
+    @ApiOperation(value = "查看运行环境", notes = "查看当前所运行的环境(dev/prd/pre/test)")
+    @GetMapping("/runtimeSystem")
+    public String lookNowSys() {
+        return profilesActive;
+    }
+
 	@ApiOperation(value = "作用:接收多条数据", notes = "info备注")
 	@PostMapping("/info")
-	public String addUser(@RequestBody List<User> user) {
+	public List<User> addUser(@RequestBody List<User> user) {
 		//System.out.println(user.get(0).getDate().toLocaleString());
 		System.out.println(user);
-
-		return null;
+		return user;
 	}
 
 

@@ -46,4 +46,8 @@ public class FormatUtil {
     public static DateTimeFormatter getDateFormat(){
         return DateTimeFormatter.ofPattern(DATE_PATTERN);
     }
+
+    public static DateTimeFormatter getFormatYYYYMMddHHmmss(){
+        return DateTimeFormatter.ofPattern(TIME_PATTERN_S);
+    }
 }

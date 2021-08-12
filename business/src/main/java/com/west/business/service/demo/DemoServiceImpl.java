@@ -31,7 +31,7 @@ public class DemoServiceImpl implements DemoService{
 
 
 
-        return null;
+        return reqString;
     }
 
     public static void main(String[] args) throws Exception {

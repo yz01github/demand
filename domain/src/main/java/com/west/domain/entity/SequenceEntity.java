@@ -14,7 +14,7 @@ import lombok.EqualsAndHashCode;
  * created 2021/1/21
  */
 @Data
-@TableName(value = "SEQUENCE")
+@TableName(value = "TO_SEQUENCE")
 @EqualsAndHashCode(callSuper = false)
 public class SequenceEntity extends Model<BaseEntity> {
 
@@ -26,6 +26,9 @@ public class SequenceEntity extends Model<BaseEntity> {
 
     // 步长
     private Integer increment;
+
+    // 序列最大值
+    private Integer limitMaxValue;
 
     // 缓存长度
     private Integer cacheSize;

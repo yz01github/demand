@@ -1,34 +1,27 @@
 package com.west.business;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+import com.google.zxing.WriterException;
+import com.west.business.consts.FileSuffixConsts;
 import com.west.business.pojo.vo.user.CreateUserVO;
 import com.west.business.util.CommonStrUtil;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import com.west.business.util.ZXingUtil;
 import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.web.bind.annotation.CrossOrigin;
 
-import javax.validation.constraints.NotBlank;
+import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 // @EnableEurekaClient		// 将当前项目标记为客户端
 // @EnableFeignClients
@@ -39,29 +32,53 @@ import java.util.stream.Collectors;
 //@EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class})
 @SpringBootApplication
 public class BusinessApp{
-	
-    public static void main(String[] args) throws UnsupportedEncodingException {
-        // test();
-        //test1();
-//        test2();
-        // test3();
-         //test4();
-         //test5();
 
-        ConfigurableApplicationContext context = SpringApplication.run(BusinessApp.class, args);
-        ConfigurableListableBeanFactory beanFactory = context.getBeanFactory();
-        Iterator<String> iterator = beanFactory.getBeanNamesIterator();
-        while (iterator.hasNext()){
-            String next = iterator.next();
-            System.out.println(next);
-        }
-        System.out.println("aaa");
-        System.out.println("bbb");
+    // java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8000
+    public static void main(String[] args) throws Exception {
+        ApplicationContext context = SpringApplication.run(BusinessApp.class, args);
+        com.west.business.util.SpringContextUtils.setContext(context);
+        // test7();
     }
 
+    private static void test7() throws Exception {
+        /**
+         * 生成二维码
+         * 加密：将文字其他东西放在图片里面
+         * 解密：反之
+         */
+        String projPath = System.getProperty("user.dir");
+        String imagePath = projPath+"/business/src/main/resources/img/webapp.jpg";
+        String imgPath = projPath+"\\business\\src\\main\\resources\\img\\logo.jpg";
+        String content = "https://www.baidu.com/";
+        // ZXingUtil.encodeimage(imagePath, "JPEG", content, 430, 430 , imgPath);
+        ZXingUtil.genQRCode(imagePath, FileSuffixConsts.JPEG, content, 430, 430 , "");
+        /**
+         * 解密 -->将二维码内部的文字显示出来
+         */
+        String s = ZXingUtil.parseQRCode(new File(imagePath));
+        System.out.println();
+    }
+
+    private static void test6() {
+        long startTime = System.currentTimeMillis();
+        for (int i = 0; i < 100000; i++) {
+            StringBuilder builder = new StringBuilder();
+            String s1 = UUID.randomUUID().toString();
+            String s2 = UUID.randomUUID().toString();
+            String s6 = builder.append(s1).append(s2).toString();
+        }
+        System.out.println(System.currentTimeMillis()-startTime);
+    }
+
+    // 1560 2281 1906 1603 1665 1736
     private static void test5() {
-        boolean res = !"1".equals("2");
-        System.out.println(res);
+        long startTime = System.currentTimeMillis();
+        for (int i = 0; i < 100000; i++) {
+            String s1 = UUID.randomUUID().toString();
+            String s2 = UUID.randomUUID().toString();
+            String s6 = s1+s2;
+        }
+        System.out.println(System.currentTimeMillis()-startTime);
     }
 
     private static void test4() throws UnsupportedEncodingException {
@@ -92,11 +109,6 @@ public class BusinessApp{
         System.out.println(res2);
 
     }
-    private static void test3() {
-        Map map = (Map)null;
-        System.out.println(map);
-    }
-
 
     private static void test2() {
         String tradeEparchCode = humpToLine("tradeEparchCode", false);

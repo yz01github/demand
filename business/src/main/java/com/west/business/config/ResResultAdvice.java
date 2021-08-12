@@ -1,5 +1,7 @@
 package com.west.business.config;
 
+import com.alibaba.druid.support.json.JSONUtils;
+import com.alibaba.fastjson.JSON;
 import com.west.business.annotation.ResultAdvice;
 import com.west.business.pojo.pub.ResResult;
 import lombok.extern.slf4j.Slf4j;
@@ -7,13 +9,10 @@ import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
-import java.util.List;
 import java.util.Objects;
-import java.util.Arrays;
 
 /**
  * description: [拦截 Controller 返回参数，做统一返回数据处理，配合 ResResult.class 使用]
@@ -23,7 +22,7 @@ import java.util.Arrays;
  * created 2021/4/16
  */
 @Slf4j
-@RestControllerAdvice
+@RestControllerAdvice(basePackages = "com.west.business.controller")
 public class ResResultAdvice implements ResponseBodyAdvice {
 
     /**
@@ -37,16 +36,17 @@ public class ResResultAdvice implements ResponseBodyAdvice {
     @Override
     public boolean supports(MethodParameter methodParameter, Class clazz) {
         Class<?> declaringClass = methodParameter.getDeclaringClass();
-        RequestMapping annotation = declaringClass.getAnnotation(RequestMapping.class);
-        if(Objects.nonNull(annotation)){
-            String[] controPrefixURI = annotation.value();
-            List<String> list = Arrays.asList("/user", "/demand");
-            // 如果包含，就不处理返回结果
-            if(list.contains(controPrefixURI[0])){
-                return false;
-            }
-        }
-        return methodParameter.hasMethodAnnotation(ResultAdvice.class);
+//        RequestMapping annotation = declaringClass.getAnnotation(RequestMapping.class);
+//        if(Objects.nonNull(annotation)){
+//            String[] controPrefixURI = annotation.value();
+//            List<String> list = Arrays.asList("/user", "/demand");
+//            // 如果包含，就不处理返回结果
+//            if(list.contains(controPrefixURI[0])){
+//                return false;
+//            }
+//        }
+        return methodParameter.hasMethodAnnotation(ResultAdvice.class)
+                || Objects.nonNull(declaringClass.getAnnotation(ResultAdvice.class));
     }
 
     /**
@@ -68,6 +68,8 @@ public class ResResultAdvice implements ResponseBodyAdvice {
                                   Class clazz,
                                   ServerHttpRequest serverHttpRequest,
                                   ServerHttpResponse serverHttpResponse) {
-        return ResResult.successAddData(body);
+
+        // String类型直接返回，因为做处理会有异常：java.lang.ClassCastException: com.west.business.pojo.pub.ResResult cannot be cast to java.lang.String
+        return (body instanceof String) ? body : ResResult.successAddData(body);
     }
 }

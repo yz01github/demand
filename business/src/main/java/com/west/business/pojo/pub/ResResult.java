@@ -2,6 +2,8 @@ package com.west.business.pojo.pub;
 
 import com.west.business.util.date.DateUtils;
 import lombok.Data;
+import lombok.Getter;
+import org.springframework.http.HttpStatus;
 
 /**
  * description: [统一返回封装Bean]
@@ -58,8 +60,8 @@ public class ResResult<T> {
 	public static <T>  ResResult<T> success() {
 		//返回一个只带200状态码的结果对象（请求成功对象）
 		ResResult<T> result = new  ResResult<T>();
-		result.setStatus(200);
-		result.setMessage(SUCCESS_MESSAGE);
+		result.setStatus(ResCode.SUCCESS.getCode());
+		result.setMessage(ResCode.SUCCESS.getMessage());
 		result.setDealTime(DateUtils.getSysTime());
 		return result;
 	}
@@ -115,21 +117,31 @@ public class ResResult<T> {
         return result;
     }
 
+    public static <T>  ResResult<T> resResult(ResCode resCode, T data) {
+        //返回一个附带自定义状态码的结果对象
+        ResResult<T> result = new  ResResult<T>();
+        result.setStatus(resCode.getCode());
+        result.setMessage(resCode.getMessage());
+        result.setDealTime(DateUtils.getSysTime());
+        result.setData(data);
+        return result;
+    }
+
 	public static <T>  ResResult<T> fail() {
 		//返回一个只带500状态码的结果对象（请求失败对象）
 		ResResult<T> result = new  ResResult<T>();
-		result.setStatus(500);
-		result.setMessage(FAILED_MESSAGE);
+		result.setStatus(ResCode.FAIL.getCode());
+		result.setMessage(ResCode.FAIL.getMessage());
 		result.setDealTime(DateUtils.getSysTime());
 		return result;
 	}
 
-    private static <T>  ResResult<T> fail(T data) {
+    public static <T>  ResResult<T> fail(T data) {
         //返回一个带500状态码的结果对象,并且附带数据
         return failAddData(data);
     }
 
-    private static <T>  ResResult<T> fail(String message, T data) {
+    public static <T>  ResResult<T> fail(String message, T data) {
         //返回一个带500状态码的结果对象,并且附带自定义提示和数据
         ResResult<T> result = fail();
         result.setMessage(message);
@@ -152,4 +164,19 @@ public class ResResult<T> {
     }
 
 
+    public enum ResCode{
+        SUCCESS(200,"操作成功"),
+	    FAIL(500, "操作失败"),
+	    PARAM_ERROR(400,"参数校验不通过");
+
+        @Getter
+        Integer code;
+        @Getter
+        String message;
+
+        ResCode(Integer code, String message) {
+            this.code = code;
+            this.message = message;
+        }
+    }
 }

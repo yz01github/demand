@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 /**
- * description: []
+ * description: [序列Dao]
  * title: SequenceDao
  *
  * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>
@@ -18,4 +18,7 @@ public interface SequenceDao extends BaseMapper<SequenceEntity> {
 
     @Select("SELECT seq(#{seqId})")
     String callSeq(@Param("seqId") String seqId);
+
+    @Select("SELECT cycleSeq(#{seqId})")
+    String callCycleSeq(@Param("seqId") String seqId);
 }

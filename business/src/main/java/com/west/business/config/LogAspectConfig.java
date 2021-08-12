@@ -1,12 +1,20 @@
 package com.west.business.config;
 
+import com.west.business.util.GeneratorUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.connector.Request;
+import org.apache.catalina.connector.RequestFacade;
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
+import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
+import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -14,7 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 
 /**
- * description: []
+ * description: [日志切面配置]
  * title: LogAspectConfig
  *
  * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>
@@ -26,33 +34,79 @@ import java.util.Arrays;
 @Configuration
 public class LogAspectConfig {
 
-    public int getOrder() {
-        return 2;// 切面优先级,越小越优先
-    }
+    private static HttpServletRequest BLANK_REQUEST = new RequestFacade(new Request());
 
-    @Pointcut("@annotation(org.springframework.web.bind.annotation.GetMapping) ||" +
-            " @annotation(org.springframework.web.bind.annotation.PostMapping) ||" +
+
+    // com.west.business.controller包下所有 *Mapping标注的方法
+    @Pointcut("execution(* com.west.business.controller..*.*(..)) && (" +
+            "@annotation(org.springframework.web.bind.annotation.GetMapping) ||" +
+            "@annotation(org.springframework.web.bind.annotation.PostMapping) ||" +
             "@annotation(org.springframework.web.bind.annotation.PutMapping) ||" +
             "@annotation(org.springframework.web.bind.annotation.DeleteMapping) ||" +
             "@annotation(org.springframework.web.bind.annotation.RequestMapping) ||" +
-            "@annotation(org.springframework.web.bind.annotation.PatchMapping))")
+            "@annotation(org.springframework.web.bind.annotation.PatchMapping))" +
+            ")")
     public void requestPoint(){}
 
+    /**
+     * description: [环绕切面,在切点前后均可执行某些逻辑]
+     * @param   pjp     切面入参
+     * @return  Object  切点返回值
+     * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>
+     * created 2021/5/11
+     */
+    @Order(2)// 切面优先级,越小越优先
+    @Around("requestPoint()")
+    public Object doAround(ProceedingJoinPoint pjp) throws Throwable {
+        /* 通过AOP可以修改切点入参,方法如下
+        //获取方法参数值数组
+        Object[] args = pjp.getArgs();
+        //得到其方法签名
+        MethodSignature methodSignature = (MethodSignature) pjp.getSignature();
+        //获取方法参数类型数组
+        Class[] paramTypeArray = methodSignature.getParameterTypes();
+        log.info("请求入参:{} ", Arrays.toString(pjp.getArgs()));
+        //动态修改其参数
+        //注意，如果调用joinPoint.proceed()方法，则修改的参数值不会生效，必须调用joinPoint.proceed(Object[] args)
+        Object result = pjp.proceed(args);
+        */
+        String uuid = GeneratorUtil.getUUID();
+        HttpServletRequest request = getRequest();
+        log.info("{}-请求URL:{} 开始!", uuid, request.getRequestURL());
+        log.info("{}-请求入参:{} ", uuid, Arrays.toString(pjp.getArgs()));
+        Object result = pjp.proceed();
+        log.info("{}-请求结果:{} ", uuid, result);
+        log.info("{}-请求URL:{} 结束!", uuid, request.getRequestURL());
+        //如果这里不返回result，则目标对象实际返回值会被置为null
+        return result;
+    }
 
-    @Before("requestPoint()")
-    public void doBefor(JoinPoint point){
+    // 获取请求对象
+    private HttpServletRequest getRequest(){
+        try{
+            // 开启Feign的熔断功能 之后,可能会导致获取失败
+            ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+            return attributes.getRequest();
+        }catch(Exception e){
+            log.debug("日志切面获取请求对象时发生异常情况,不影响");
+            // 非最终最优解决方案:获取失败后,返回一个空的 HttpServletRequest 防止此切面后续打印日志报空指针异常
+            return BLANK_REQUEST;
+        }
+    }
+    //@Before("requestPoint()")
+    /*public void doBefor(JoinPoint point){
         HttpServletRequest request = getRequest();
         log.info("请求URL:{} 开始!",request.getRequestURL());
         log.info("请求入参:{} ", Arrays.toString(point.getArgs()));
-    }
+    }*/
 
     //后置正常通知
-    @AfterReturning(returning = "ret", pointcut = "requestPoint()")
-    public void doAfterReturning(Object ret) throws Throwable {
+    //@AfterReturning(returning = "ret", pointcut = "requestPoint()")
+    /*public void doAfterReturning(Object ret) throws Throwable {
         HttpServletRequest request = getRequest();
         log.info("请求URL:{} 结束!",request.getRequestURL());
         log.info("请求结果:{} ", ret);
-    }
+    }*/
 
     //后置异常通知
     /*@AfterThrowing("requestPoint()")
@@ -66,10 +120,5 @@ public class LogAspectConfig {
         log.info("请求finally log");
     }*/
 
-    // 获取请求对象
-    private HttpServletRequest getRequest(){
-        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        HttpServletRequest request = attributes.getRequest();
-        return request;
-    }
+
 }

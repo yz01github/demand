@@ -14,16 +14,16 @@ public class MybatisPlusMetaObjectHandler implements MetaObjectHandler {
 
     @Override
     public void insertFill(MetaObject metaObject) {
-//        log.debug("insertFill begin...");
-//        setFieldValByName("insertUser", "DEFAULT_INSERT", metaObject);
-//        setFieldValByName("insertTime", LocalDateTime.now(), metaObject);
-//        setFieldValByName("isDelete", '0', metaObject);
+        log.debug("insertFill begin...");
+        setFieldValByName("insertUser", "DEFAULT_INSERT", metaObject);
+        setFieldValByName("insertTime", LocalDateTime.now(), metaObject);
+        setFieldValByName("isDelete", '0', metaObject);
     }
 
     @Override
     public void updateFill(MetaObject metaObject) {
-//        log.debug("updateFill begin...");
-//        setFieldValByName("updateUser", "DEFAULT_UPDATE", metaObject);
-//        setFieldValByName("updateTime",LocalDateTime.now(), metaObject);
+        log.debug("updateFill begin...");
+        setFieldValByName("updateUser", "DEFAULT_UPDATE", metaObject);
+        setFieldValByName("updateTime",LocalDateTime.now(), metaObject);
     }
 }

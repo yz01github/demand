@@ -33,6 +33,10 @@ public class DateUtils {
         return LocalDateTime.now().format(FormatUtil.getDateFormat());
     }
 
+    public static String getSysTimeYYYYMMddHHmmss(){
+        return LocalDateTime.now().format(FormatUtil.getFormatYYYYMMddHHmmss());
+    }
+
     // 获取几天前日期
     public static LocalDate dateAddDay(long days2Add){
         return LocalDate.now().plusDays(days2Add);
@@ -104,7 +108,7 @@ public class DateUtils {
     }
 
     /**
-     * @see #getFirstDayMonth(LocalDate)
+     * @see #getFirstDayMonth(LocalDateTime)
      */
     public static LocalDate getFirstDayMonth(LocalDate date) {
         return date.with(TemporalAdjusters.firstDayOfMonth());

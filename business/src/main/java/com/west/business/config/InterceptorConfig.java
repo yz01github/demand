@@ -11,7 +11,7 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
 /**
- * description: []
+ * description: [拦截器注册配置]
  * title: InterceptorConfig
  *
  * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>

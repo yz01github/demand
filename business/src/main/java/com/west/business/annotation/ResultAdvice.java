@@ -7,7 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * description: []
+ * description: [此注解用于返回结果统一包装,声明在类上是，所有接口均包装]
  * title: IgnoreResultAdvice
  *
  * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>

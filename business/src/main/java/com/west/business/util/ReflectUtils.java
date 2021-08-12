@@ -28,15 +28,6 @@ public class ReflectUtils {
     private static final Map<Class<?>, Method[]> METHODS_CACHE = new ConcurrentHashMap<>();
 
     /**
-     * 直接调用对象方法，忽视private/protected修饰符
-     *
-     * @param obj
-     * @param methodName
-     * @param parameterTypes
-     * @param args
-     * @return
-     */
-    /**
      * description: [反射调用指定方法, 忽略权限修饰符]
      * @param   obj             调用方法的实例对象
      * @param   methodName      方法名
