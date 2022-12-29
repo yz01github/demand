@@ -1,4 +1,4 @@
-package com.west.business.youngzeu.design;
+package com.west.business.youngzeu.design.design1;
 
 /**
  * description: [Adaptee（适配者类）：适配者即被适配的角色，它定义了一个已经存在的接口，

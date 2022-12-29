@@ -1,19 +1,19 @@
 package com.west.business;
 
-import com.google.zxing.WriterException;
 import com.west.business.consts.FileSuffixConsts;
 import com.west.business.pojo.vo.user.CreateUserVO;
 import com.west.business.util.CommonStrUtil;
 import com.west.business.util.ZXingUtil;
+import org.apache.commons.lang3.StringUtils;
+import java.util.Arrays;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -26,7 +26,9 @@ import java.util.regex.Pattern;
 // @EnableEurekaClient		// 将当前项目标记为客户端
 // @EnableFeignClients
 @EnableCaching
-@ComponentScan(basePackages = {"com.west.business.config","com.west.business.controller",
+@ComponentScan(basePackages = {"com.west.business.config",
+        "com.west.business.controller",
+        "com.west.business.util",// util 要扫描的原因见RedisUtil
         "com.west.business.service"})
 @MapperScan(value = "com.west.domain.dao")
 //@EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class})
@@ -35,9 +37,24 @@ public class BusinessApp{
 
     // java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8000
     public static void main(String[] args) throws Exception {
-        ApplicationContext context = SpringApplication.run(BusinessApp.class, args);
+        ConfigurableApplicationContext context = SpringApplication.run(BusinessApp.class, args);
         com.west.business.util.SpringContextUtils.setContext(context);
-        // test7();
+        //test9();
+    }
+
+    private static void test9() throws Exception {
+        // String aaa = SysDateMgr.getSysDate("YYYYMMDDHH24MISS");
+    }
+
+    private static boolean test8(String orderType, String productOfferingId) {
+        List<String> stringList = Arrays.asList("1", "2", "3", "4", "5", "6");
+        List<String> stringList26 = Arrays.asList("2","6");
+
+        if (!stringList.contains(orderType)
+                ||(stringList26.contains(orderType) && StringUtils.isBlank(productOfferingId))) {
+            return true;
+        }
+        return false;
     }
 
     private static void test7() throws Exception {

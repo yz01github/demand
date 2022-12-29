@@ -1,4 +1,4 @@
-package com.west.business.youngzeu.proxy.staticproxy;
+package com.west.business.youngzeu.design.proxy.staticproxy;
 
 import lombok.extern.slf4j.Slf4j;
 

@@ -1,6 +1,7 @@
 package com.west.business.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.west.business.annotation.ResultAdvice;
 import com.west.business.config.ThreadContext;
 import com.west.business.pojo.pub.ResResult;
 import com.west.business.pojo.vo.page.PageVO;
@@ -64,16 +65,16 @@ public class UserController {
      * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>
      * created 2020/8/9
      */
-    @PostMapping("/")
+    @PostMapping("/login")
     public ResResult login(@RequestBody LoginUserVO userVO, HttpServletRequest request, HttpServletResponse responce) {
         // 1. 验证用户密码是否正确
-        LoginUserVO loginUserVO = userService.login(userVO);
+        LoginUserVO loginUserVO = userService.login(userVO, request, responce);
         boolean success = loginUserVO.isLoginSuccess();
 
         // 处理 session,cookie,redis
         if(success){
             String token = GeneratorUtil.getUUID();
-            String userId = userVO.getUserId();
+            String userId = loginUserVO.getUserId();
             HttpSession session = request.getSession();
             // 失效旧登录信息
             Object oldUser = session.getAttribute("userId");

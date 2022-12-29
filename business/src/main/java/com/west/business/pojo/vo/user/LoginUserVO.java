@@ -1,6 +1,9 @@
 package com.west.business.pojo.vo.user;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 
@@ -12,6 +15,9 @@ import javax.validation.constraints.NotBlank;
  * created 2020/8/9
  */
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class LoginUserVO {
 
     // 用户账号

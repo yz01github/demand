@@ -9,9 +9,11 @@ import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -36,15 +38,15 @@ public class ResResultAdvice implements ResponseBodyAdvice {
     @Override
     public boolean supports(MethodParameter methodParameter, Class clazz) {
         Class<?> declaringClass = methodParameter.getDeclaringClass();
-//        RequestMapping annotation = declaringClass.getAnnotation(RequestMapping.class);
-//        if(Objects.nonNull(annotation)){
-//            String[] controPrefixURI = annotation.value();
-//            List<String> list = Arrays.asList("/user", "/demand");
-//            // 如果包含，就不处理返回结果
-//            if(list.contains(controPrefixURI[0])){
-//                return false;
-//            }
-//        }
+        RequestMapping annotation = declaringClass.getAnnotation(RequestMapping.class);
+        if(Objects.nonNull(annotation)){
+            String[] controPrefixURI = annotation.value();
+            List<String> list = java.util.Arrays.asList("/user", "/demand");
+            // 如果包含，就不处理返回结果
+            if(list.contains(controPrefixURI[0])){
+                return false;
+            }
+        }
         return methodParameter.hasMethodAnnotation(ResultAdvice.class)
                 || Objects.nonNull(declaringClass.getAnnotation(ResultAdvice.class));
     }

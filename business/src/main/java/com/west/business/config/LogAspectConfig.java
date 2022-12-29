@@ -1,12 +1,18 @@
 package com.west.business.config;
 
+import com.west.business.util.GeneratorUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.connector.Request;
+import org.apache.catalina.connector.RequestFacade;
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
+import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -14,7 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 
 /**
- * description: []
+ * description: [日志切面]
  * title: LogAspectConfig
  *
  * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>
@@ -116,10 +122,4 @@ public class LogAspectConfig {
         log.info("请求finally log");
     }*/
 
-    // 获取请求对象
-    private HttpServletRequest getRequest(){
-        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        HttpServletRequest request = attributes.getRequest();
-        return request;
-    }
 }

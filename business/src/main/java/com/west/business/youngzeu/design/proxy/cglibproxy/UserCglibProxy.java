@@ -1,4 +1,4 @@
-package com.west.business.youngzeu.proxy.cglibproxy;
+package com.west.business.youngzeu.design.proxy.cglibproxy;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cglib.proxy.Enhancer;

@@ -134,7 +134,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleDao, RoleEntity> implements
         String roleId = roleDTO.getRoleId();
         // Redis缓存角色拥有的权限
 
-        String roleCacheId = GeneratorUtil.generaRolePermCacheId(roleId);
+        String roleCacheId = GeneratorUtil.generateRolePermCacheId(roleId);
         String rolePermCache = RedisUtil.get(roleCacheId);
         List<String> rolePermIds;
         if(Objects.isNull(rolePermCache)){

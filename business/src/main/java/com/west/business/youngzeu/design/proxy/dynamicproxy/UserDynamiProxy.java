@@ -1,4 +1,4 @@
-package com.west.business.youngzeu.proxy.dynamicproxy;
+package com.west.business.youngzeu.design.proxy.dynamicproxy;
 
 import lombok.extern.slf4j.Slf4j;
 

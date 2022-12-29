@@ -1,4 +1,4 @@
-package com.west.business.youngzeu.design;
+package com.west.business.youngzeu.design.design1;
 
 /**
  * description: [Adapter（适配器类）：适配器可以调用另一个接口，作为一个转换器，对Adaptee和Target进行适配，

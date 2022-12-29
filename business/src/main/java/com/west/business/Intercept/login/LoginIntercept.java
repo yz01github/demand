@@ -1,11 +1,13 @@
-package com.west.business.Intercept.login;
+package com.west.business.intercept.login;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.west.business.Intercept.BaseIntercept;
+import com.west.business.intercept.BaseIntercept;
 import com.west.business.config.ThreadContext;
 import com.west.business.pojo.dto.context.URP;
 import com.west.business.pojo.pub.ResResult;
 import com.west.business.service.perm.PermService;
+import com.west.business.service.user.UserService;
+import com.west.business.util.GeneratorUtil;
 import com.west.business.util.date.DateUtils;
 import com.west.domain.dao.PermissionDao;
 import com.west.domain.dao.RoleDao;
@@ -22,7 +24,6 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.servlet.ModelAndView;
@@ -51,12 +52,17 @@ import java.util.stream.Collectors;
 @Slf4j
 public class LoginIntercept extends BaseIntercept {
 
+    private int loginTTL = 60 * 60 * 30;
+
     @Getter
     @Setter
     private String fieledMessage;
 
     @Autowired
     private UserDao userDao;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private RoleDao roleDao;
@@ -78,7 +84,7 @@ public class LoginIntercept extends BaseIntercept {
     @PostConstruct
     public void initPath(){
         log.debug("LoginIntercept.initPath begin...");
-        // 拦截器路径加载, 优先缓存获取
+        // 拦截器路径加载, 优先缓存获取,这块理论上应该新建一个拦截器的拦截路径配置表,目前暂时写死
         List<PermissionEntity> allPerms = permService.qryAllPermList();
         if(CollectionUtils.isEmpty(allPerms)){
             throw new IllegalArgumentException("权限配置为空,系统禁止运行!");
@@ -86,7 +92,8 @@ public class LoginIntercept extends BaseIntercept {
         List<String> permPaths = allPerms.stream().filter(o -> Objects.equals(o.getPermType(), "0"))
                 .map(PermissionEntity::getPermPath).collect(Collectors.toList());
         super.setAddPaths(permPaths);
-        super.setExcludePaths(Arrays.asList("/excludePaths"));
+        super.setExcludePaths(Arrays.asList("/excludePaths", "/swagger-resources/**", "/webjars/**", "/v2/**",
+                "/swagger-ui.html/**", "/login/**", "/user/login"));
     }
 
     @Override
@@ -109,6 +116,7 @@ public class LoginIntercept extends BaseIntercept {
         Object token = session.getAttribute(loginKey);
         boolean loginOk = Arrays.asList(cookies).stream()
                 .anyMatch(c -> (loginKey.equals(c.getName()) && Objects.equals(c.getValue(), token)));
+
         // 登录信息有问题, 也返回请求无权限
         if(!loginOk){
             setFieledMessage("用户登录令牌异常,请重新登录!");
@@ -118,11 +126,24 @@ public class LoginIntercept extends BaseIntercept {
 
         // 2. 已登录且token匹配,则匹配用户权限,并存入threadLocal
         initURP(currUserId);
-        URP urp = ThreadContext.currURP.get();
-        Map<String, PermissionEntity> allHasPerms = urp.getAllHasPerms();
+        URP urp = ThreadContext.getURP();
+        Map<String, PermissionEntity> allHasPerms = urp.getPerms();
+        boolean isSuperUsr = isSuperUser(currUserId);
+        if(isSuperUsr){
+            return true;
+        }
         boolean canRequest = allHasPerms.containsValue(requestURI);
         log.debug("LoginInterceptor.preHandle end...; canRequest:{}", canRequest);
         return canRequest;// 只有返回true才会继续向下执行，返回false取消当前请求
+    }
+
+    private boolean isSuperUser(String currUserId) {
+        String userId = ThreadContext.getURP().getUser().getUserId();
+        if(StringUtils.equals(currUserId, userId)){
+            return ThreadContext.getURP().getRoles().containsKey("SUPER_USER");
+        }
+        Map<String, RoleEntity> roleEntityMap = buildHasRoles(currUserId);
+        return roleEntityMap.containsKey("SUPER_USER");
     }
 
     @Override
@@ -134,6 +155,12 @@ public class LoginIntercept extends BaseIntercept {
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
             throws Exception {
+        // 刷新登录cookie;
+        /**
+         * 存在问题：加上之后，cookie无法携带到下一次请求，获取不到cookie中的令牌
+         */
+//        String userId = (String) request.getSession().getAttribute("userId");
+//        userService.refreshLoginUser(request, response, userId);
         System.out.println(">>>MyInterceptor2>>>>>>>在整个请求结束之后被调用，也就是在DispatcherServlet 渲染了对应的视图之后执行（主要是用于进行资源清理工作）");
     }
 
@@ -143,7 +170,7 @@ public class LoginIntercept extends BaseIntercept {
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("USER_ID", request.getSession().getAttribute("userId"));
         resultMap.put("REQ_URI", request.getRequestURI());
-        resultMap.put("REQ_TIME", DateUtils.getSysDateyyyyMMdd());
+        resultMap.put("REQ_TIME", DateUtils.getSysTimeyyyyMMddHHmmssSSS());
         return ResResult.resResult(HttpStatus.FORBIDDEN.value(), getFieledMessage(), resultMap);
     }
 
@@ -157,11 +184,11 @@ public class LoginIntercept extends BaseIntercept {
         Map<String, PermissionEntity> allHasPerms = buildAllHasPerms(rpList);
 
         urp.setUser(user);//当前登录user
-        urp.setHasRoles(hasRoles);// 当前用户拥有的所有角色
+        urp.setRoles(hasRoles);// 当前用户拥有的所有角色
         urp.setRelationRP(rpList);// 当前用户用的的所有角色对应权限编码
-        urp.setAllHasPerms(allHasPerms);// 用户拥有的所有权限
+        urp.setPerms(allHasPerms);// 用户拥有的所有权限
 
-        ThreadContext.currURP.set(urp);
+        ThreadContext.setURP(urp);
     }
 
     /**
@@ -214,7 +241,7 @@ public class LoginIntercept extends BaseIntercept {
         // 查找角色信息
         List<String> roleIds = urList.stream().map(UserRoleEntity::getRoleId).collect(Collectors.toList());
         QueryWrapper<RoleEntity> reWrapper = new QueryWrapper<>();
-        reWrapper.in("USER_ID", roleIds);
+        reWrapper.in("ROLE_ID", roleIds);
         List<RoleEntity> roleList = roleDao.selectList(reWrapper);
         if(CollectionUtils.isEmpty(roleList)){
             return Collections.emptyMap();

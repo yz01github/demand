@@ -1,4 +1,4 @@
-package com.west.business.Intercept;
+package com.west.business.intercept;
 
 import com.west.business.pojo.pub.ResResult;
 import lombok.Getter;
@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,10 +29,10 @@ import java.util.Map;
 public abstract class BaseIntercept implements HandlerInterceptor {
 
     // 需要拦截的路径
-    private List<String> addPaths;
+    private List<String> addPaths = new ArrayList<>();
 
     // 排除的路径(不拦截的)
-    private List<String> excludePaths;
+    private List<String> excludePaths = new ArrayList<>();
 
     /**
      * description: [拦截器中需要自定义返回时,调用该方法,

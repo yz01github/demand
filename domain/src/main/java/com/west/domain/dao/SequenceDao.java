@@ -16,9 +16,9 @@ import org.apache.ibatis.annotations.Select;
 @Mapper
 public interface SequenceDao extends BaseMapper<SequenceEntity> {
 
-    @Select("SELECT seq(#{seqId})")
+    @Select("SELECT fo_seq(#{seqId})")
     String callSeq(@Param("seqId") String seqId);
 
-    @Select("SELECT cycleSeq(#{seqId})")
+    @Select("SELECT fo_cycleSeq(#{seqId})")
     String callCycleSeq(@Param("seqId") String seqId);
 }

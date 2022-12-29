@@ -38,6 +38,7 @@ public class RedisUtil {
     private static RedisTemplate<String, Object> redisTemplate;
 
     /**
+     * 让工具类使用注入对象的方法之一:
      * 顺序： Constructor >> @Autowired >> @PostConstruct >> 静态方法
      * 所有Autowired完成后自动执行PostConstruct, 未生效则注意:不应懒加载,Component在主类中扫描的范围
      */

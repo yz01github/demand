@@ -47,7 +47,15 @@ public class FormatUtil {
         return DateTimeFormatter.ofPattern(DATE_PATTERN);
     }
 
+    public static DateTimeFormatter getDateFormatyyyyMMdd(){
+        return DateTimeFormatter.ofPattern(TIME_PATTERN_D);
+    }
+
     public static DateTimeFormatter getFormatYYYYMMddHHmmss(){
         return DateTimeFormatter.ofPattern(TIME_PATTERN_S);
+    }
+
+    public static DateTimeFormatter getFormatyyyyMMddHHmmssSSS(){
+        return DateTimeFormatter.ofPattern(TIME_PATTERN_MILLISECOND);
     }
 }

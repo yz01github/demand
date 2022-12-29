@@ -1,7 +1,6 @@
 package com.west.business.youngzeu.design.design1;
 
 import com.west.business.util.HttpUtil;
-import com.west.business.youngzeu.design.Adaptee;
 import lombok.extern.slf4j.Slf4j;
 
 /**

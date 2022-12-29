@@ -1,6 +1,7 @@
 package com.west.business.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.west.business.annotation.ResultAdvice;
 import com.west.business.pojo.dto.role.CreateRoleDTO;
 import com.west.business.pojo.dto.role.QueryRoleDTO;
 import com.west.business.pojo.dto.role.RoleDTO;
@@ -26,6 +27,7 @@ import javax.validation.Valid;
 @Api(tags = "角色相关接口")
 @Slf4j
 @RestController
+@ResultAdvice
 @RequestMapping("/role")
 public class RoleController {
 
@@ -34,10 +36,10 @@ public class RoleController {
 
     @ApiOperation(value="新增角色",notes="新增角色")
     @PostMapping("/")
-    public ResResult<Integer> createPerm(@RequestBody @Valid CreateRoleDTO roleDTO){
+    public Integer createPerm(@RequestBody @Valid CreateRoleDTO roleDTO){
         // param checked
         int resultNum = roleService.createRole(roleDTO);
-        return ResResult.successAddData(resultNum);
+        return resultNum;
     }
 
     /**
@@ -47,9 +49,9 @@ public class RoleController {
      */
     @ApiOperation(value="修改角色",notes="修改角色")
     @PutMapping("/")
-    public ResResult<Integer> updateDemand(@RequestBody UpdateRoleDTO roleDTO) {
+    public Integer updateDemand(@RequestBody UpdateRoleDTO roleDTO) {
         int num = roleService.updateRole(roleDTO);
-        return ResResult.successAddData(num);
+        return num;
     }
 
     /**
@@ -59,15 +61,15 @@ public class RoleController {
      */
     @ApiOperation(value="删除角色",notes="删除角色")
     @DeleteMapping("/{roleId}")
-    public ResResult deleteDemand(@PathVariable("roleId") String roleId) {
+    public boolean deleteDemand(@PathVariable("roleId") String roleId) {
         int num = roleService.deleteRole(roleId);
-        return ResResult.result(num > 0);
+        return num > 0;
     }
 
     @ApiOperation("分页查询所有角色")
     @GetMapping("/page")
-    public ResResult<IPage<QueryRoleDTO>> qryAllPage(QueryRoleDTO roleDTO, PageVO<RoleDTO> pageVO) {
+    public IPage<QueryRoleDTO> qryAllPage(QueryRoleDTO roleDTO, PageVO<RoleDTO> pageVO) {
         IPage<QueryRoleDTO> iPage = roleService.qryRoles(roleDTO, pageVO);
-        return ResResult.successAddData(iPage);
+        return iPage;
     }
 }

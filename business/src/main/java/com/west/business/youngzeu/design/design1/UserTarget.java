@@ -1,4 +1,4 @@
-package com.west.business.youngzeu.design;
+package com.west.business.youngzeu.design.design1;
 
 import com.west.business.youngzeu.design.design1.Target;
 

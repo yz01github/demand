@@ -14,6 +14,7 @@ public interface ISequenceService extends IService<SequenceEntity> {
 
     /**
      * description: [获取趋势递增数字序列, 不同的业务若有需要，可以重写该方法]
+     * test: seqId="SEQ_TEST_ID"
      * @param seqId 序列id,区分不同业务场景下的序列
      * @return  序列值
      * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>

@@ -1,4 +1,4 @@
-package com.west.business.youngzeu.proxy.staticproxy;
+package com.west.business.youngzeu.design.proxy.staticproxy;
 
 /**
  * description: [静态代理时，代理类和业务具体类必须要实现同一个接口(或者继承同一个父类)]

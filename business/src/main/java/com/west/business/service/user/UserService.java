@@ -7,6 +7,8 @@ import com.west.business.pojo.vo.user.LoginUserVO;
 import com.west.business.pojo.vo.user.QueryUserVO;
 import com.west.business.pojo.vo.user.UpdateUserVO;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -34,11 +36,13 @@ public interface UserService {
 
     List<QueryUserVO> qryAll();
 
-    LoginUserVO login(LoginUserVO userVO);
+    LoginUserVO login(LoginUserVO userVO, HttpServletRequest request, HttpServletResponse responce);
 
     boolean resetPassword(CreateUserVO userVO);
 
     boolean resetAllPass();
+
+    void refreshLoginUser(HttpServletRequest request, HttpServletResponse response, String userId);
 
 
 }

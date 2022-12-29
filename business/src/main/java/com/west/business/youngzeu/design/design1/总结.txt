@@ -16,7 +16,7 @@
         Adapter extends Adaptee implments Target{
             @Override  // Target的方法
             method(){
-                Adaptee.xxx();
+                Adaptee.xxx();//Adaptee的方法,这里也可以不继承,通过对象关联,见"对象适配器"
             }
         }
 
@@ -26,4 +26,6 @@
     2. 对象适配器
     通过关联对象
 
+    实例参考: com.google.gson.TypeAdapter, 来自于jar:D:/mvn_repository/com/google/code/gson/gson/2.8.6/gson-2.8.6.jar
+    个人理解: 输入端类型有多种,且分别对应不同逻辑,输出端一致,此时
 }

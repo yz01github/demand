@@ -1,13 +1,13 @@
-package com.west.business.youngzeu.proxy;
+package com.west.business.youngzeu.design.proxy;
 
-import com.west.business.youngzeu.proxy.cglibproxy.UserCglibProxy;
-import com.west.business.youngzeu.proxy.cglibproxy.UserCglibService;
-import com.west.business.youngzeu.proxy.dynamicproxy.UserDynamiInterface;
-import com.west.business.youngzeu.proxy.dynamicproxy.UserDynamiProxy;
-import com.west.business.youngzeu.proxy.dynamicproxy.UserDynamiService;
-import com.west.business.youngzeu.proxy.staticproxy.UserStaticImpl;
-import com.west.business.youngzeu.proxy.staticproxy.UserStaticInterface;
-import com.west.business.youngzeu.proxy.staticproxy.UserStaticProxy;
+import com.west.business.youngzeu.design.proxy.cglibproxy.UserCglibProxy;
+import com.west.business.youngzeu.design.proxy.cglibproxy.UserCglibService;
+import com.west.business.youngzeu.design.proxy.dynamicproxy.UserDynamiInterface;
+import com.west.business.youngzeu.design.proxy.dynamicproxy.UserDynamiProxy;
+import com.west.business.youngzeu.design.proxy.dynamicproxy.UserDynamiService;
+import com.west.business.youngzeu.design.proxy.staticproxy.UserStaticImpl;
+import com.west.business.youngzeu.design.proxy.staticproxy.UserStaticInterface;
+import com.west.business.youngzeu.design.proxy.staticproxy.UserStaticProxy;
 
 /**
  * description: []

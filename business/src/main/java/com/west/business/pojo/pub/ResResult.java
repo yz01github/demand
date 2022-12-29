@@ -1,8 +1,11 @@
 package com.west.business.pojo.pub;
 
+import com.alibaba.fastjson.JSONObject;
 import com.west.business.util.date.DateUtils;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.http.HttpStatus;
 
 /**
@@ -10,7 +13,9 @@ import org.springframework.http.HttpStatus;
  * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>
  * created 2019/4/22
  */
-@Data
+@Getter
+@Setter
+@EqualsAndHashCode
 public class ResResult<T> {
 
 	/**
@@ -178,5 +183,10 @@ public class ResResult<T> {
             this.code = code;
             this.message = message;
         }
+    }
+
+    @Override
+    public String toString() {
+        return JSONObject.toJSONString(this);
     }
 }

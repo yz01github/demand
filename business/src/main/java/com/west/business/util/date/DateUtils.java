@@ -33,6 +33,14 @@ public class DateUtils {
         return LocalDateTime.now().format(FormatUtil.getDateFormat());
     }
 
+    public static String getSysDateyyyyMMdd(){
+        return LocalDate.now().format(FormatUtil.getDateFormatyyyyMMdd());
+    }
+
+    public static String getSysTimeyyyyMMddHHmmssSSS(){
+        return LocalDateTime.now().format(FormatUtil.getFormatyyyyMMddHHmmssSSS());
+    }
+
     public static String getSysTimeYYYYMMddHHmmss(){
         return LocalDateTime.now().format(FormatUtil.getFormatYYYYMMddHHmmss());
     }

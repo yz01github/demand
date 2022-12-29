@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.west.domain.dao.SequenceDao;
 import com.west.domain.entity.SequenceEntity;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Queue;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -22,14 +24,15 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>
  * created 2021/1/21
  */
+@Slf4j
 @Service
 public class SequenceServiceImpl extends ServiceImpl<SequenceDao, SequenceEntity>
         implements ISequenceService {
 
-    // 序列结果缓存;final修饰,防止引用修改
-    private static final Map<String, Queue<Long>> CACHE_SEQ_MAP = new ConcurrentHashMap<>();
+    // 序列结果缓存; volatile 修饰,保证多线程模式下内存可见性以及指令重排序问题
+    public static final Map<String, Queue<Long>> CACHE_SEQ_MAP = new ConcurrentHashMap<>();
 
-    // 序列配置校验结果缓存
+    // 序列配置缓存
     private static final Map<String, Boolean> CACHE_SEQ_CHECK_MAP = new ConcurrentHashMap<>();
 
     @Autowired
@@ -40,9 +43,10 @@ public class SequenceServiceImpl extends ServiceImpl<SequenceDao, SequenceEntity
         return nextval("busi_01", seqId);
     }
 
+    // 默认取循环序列
     @Override
     public Long nextval(String dataSource, String seqId) {
-        return nextval(dataSource, seqId, false);
+        return nextval(dataSource, seqId, true);
     }
 
     @Override
@@ -73,10 +77,11 @@ public class SequenceServiceImpl extends ServiceImpl<SequenceDao, SequenceEntity
             }
         }
         Long pollValue = cacheSeq.poll();
+
+        log.debug("当前线程{},获取值:{}", Thread.currentThread().getName(), pollValue);
         if (Objects.nonNull(pollValue)){
             return pollValue;
         }
-
         // 缓存队列中值已经用完, 查询序列新值,放入队列
         initQueueData(cacheSeq, seqId, isCycle);
         return cacheSeq.poll();
@@ -94,11 +99,13 @@ public class SequenceServiceImpl extends ServiceImpl<SequenceDao, SequenceEntity
         if(checkCache){
             return;
         }
-
         // 校验逻辑
         QueryWrapper<SequenceEntity> wrapper = new QueryWrapper<>();
         wrapper.eq("SEQ_ID", seqId);
         SequenceEntity entity = sequenceDao.selectOne(wrapper);
+        if(Objects.isNull(entity)){
+            throw new IllegalArgumentException("序列["+seqId+"]不存在!");
+        }
         Integer limitMaxValue = entity.getLimitMaxValue();
         Integer cacheSize = entity.getCacheSize();
 
@@ -117,7 +124,8 @@ public class SequenceServiceImpl extends ServiceImpl<SequenceDao, SequenceEntity
     private void initQueueData(Queue<Long> cacheSeq, String seqId, boolean isCycle) {
         synchronized (this){
             // 锁后校验
-            Long pollValue = cacheSeq.poll();
+            // Long pollValue = cacheSeq.poll(); 这里写poll,可能导致序列重取时总会跳过一个序列值, 例:A,B同时尝试加锁
+            Long pollValue = cacheSeq.peek();;
             if(Objects.nonNull(pollValue)){
                 return;
             }

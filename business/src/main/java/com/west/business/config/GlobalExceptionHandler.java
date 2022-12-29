@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -39,7 +41,7 @@ public class GlobalExceptionHandler {
      * created 2021/5/10
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.OK)// http状态返回200
+    @ResponseStatus(HttpStatus.BAD_REQUEST)// http状态返回400
     public ResResult globalExceptionDeal(Exception exception) throws Exception {
         try{
             if(exception instanceof MethodArgumentNotValidException){
@@ -53,6 +55,7 @@ public class GlobalExceptionHandler {
                 }
             }
         }catch (Exception e){
+            // TODO 这块后面弄成线程的 sessionId
             String uuid = UUID.randomUUID().toString();
             log.error("{}:全局异常处理失败,原异常:{}", uuid, exception.getMessage());
             log.error("{}:全局异常处理失败,异常处理失败原因:{}", uuid, exception.getMessage());
@@ -69,11 +72,26 @@ public class GlobalExceptionHandler {
      * created 2021/5/10
      */
     @ExceptionHandler({Exception.class, RuntimeException.class})
-    @ResponseStatus(HttpStatus.OK)// http状态返回200
+    @ResponseStatus(HttpStatus.BAD_REQUEST)// http状态返回400
     public ResResult globalExceptionDeal2(Exception exception) throws Exception {
+        StringWriter sw = null;
+        PrintWriter pw = null;
+        try {
+            sw = new StringWriter();
+            pw = new PrintWriter(sw, true);
+            exception.printStackTrace(pw);
+            System.out.println(sw.toString());
+        }catch (Exception e){
+            log.error("globalExceptionDeal2.print.exception:"+e);
+        }finally {
+            sw.close();
+            sw=null;
+            pw.close();
+            pw=null;
+        }
         String uuid = UUID.randomUUID().toString();
         log.error("{}:globalExceptionDeal2,原异常:{}", uuid, exception.getMessage());
         log.error("{}:globalExceptionDeal2,异常处理失败原因:{}", uuid, exception.getMessage());
-        throw exception;
+        return ResResult.failAddMessage(exception.getMessage());
     }
 }

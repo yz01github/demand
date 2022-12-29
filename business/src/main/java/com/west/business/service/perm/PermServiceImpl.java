@@ -162,7 +162,7 @@ public class PermServiceImpl extends ServiceImpl<PermissionDao, PermissionEntity
      */
     @Override
     public List<PermissionEntity> qryAllPermList() {
-        String allPermCacheId = GeneratorUtil.generaAllPermCacheId();
+        String allPermCacheId = GeneratorUtil.generateAllPermCacheId();
         // 权限的缓存:所有权限的详情,组成Map<permId, permInfo>放在一个key中
         Map<Object, Object> cachedPerm = RedisUtil.hmgetMap(allPermCacheId);
         if(!CollectionUtils.isEmpty(cachedPerm)){
