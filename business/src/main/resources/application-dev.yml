@@ -29,12 +29,15 @@ spring:
   thymeleaf:
     prefix: classpath:/htmls/
   redis:
+    # 集群(三主三从)的配置cluster
+    cluster:
+      nodes: 192.168.103.128:9010,192.168.103.128:9011,192.168.103.128:9012,192.168.103.128:9013,192.168.103.128:9014,192.168.103.128:9015
     # Redis数据库索引（默认为0）
     database: 0
-    # Redis服务器地址,dev访问本机,prd配置主机ip
-    host: localhost
-    port: 6379
-    password:
+    # Redis服务器地址,dev访问本机,prd配置主机ip; 单点的配置host和port
+#    host: localhost
+#    port: 6379
+    password: 123456
     # 连接池最大连接数（使用负值表示没有限制）
     jedis:
       pool:

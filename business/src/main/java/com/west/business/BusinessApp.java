@@ -4,6 +4,7 @@ import com.west.business.consts.FileSuffixConsts;
 import com.west.business.pojo.vo.user.CreateUserVO;
 import com.west.business.util.CommonStrUtil;
 import com.west.business.util.ZXingUtil;
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import java.util.Arrays;
 import org.mybatis.spring.annotation.MapperScan;
@@ -25,7 +26,7 @@ import java.util.regex.Pattern;
 
 // @EnableEurekaClient		// 将当前项目标记为客户端
 // @EnableFeignClients
-@EnableCaching
+@EnableCaching  // 开启基于注解的缓存
 @ComponentScan(basePackages = {"com.west.business.config",
         "com.west.business.controller",
         "com.west.business.util",// util 要扫描的原因见RedisUtil
@@ -35,11 +36,27 @@ import java.util.regex.Pattern;
 @SpringBootApplication
 public class BusinessApp{
 
+    /**
+     * description: []
+     * @author <a href="mailto:learnsoftware@163.com">yangzhi</a>
+     * created 2023/1/4
+     */
     // java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8000
     public static void main(String[] args) throws Exception {
         ConfigurableApplicationContext context = SpringApplication.run(BusinessApp.class, args);
         com.west.business.util.SpringContextUtils.setContext(context);
-        //test9();
+        Runtime.getRuntime().addShutdownHook(new Thread(){
+            @SneakyThrows
+            @Override
+            public void run() {
+                int i = Thread.activeCount();
+                System.out.println("aaaaaaa:"+i);
+                while (Thread.activeCount()<=0){
+                    Thread.sleep(1000);
+                }
+            }
+        }
+        );
     }
 
     private static void test9() throws Exception {

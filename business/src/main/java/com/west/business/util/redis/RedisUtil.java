@@ -1,5 +1,6 @@
 package com.west.business.util.redis;
 
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

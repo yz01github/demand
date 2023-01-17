@@ -33,10 +33,10 @@ public class InterceptorConfig extends WebMvcConfigurationSupport {
         log.debug("InterceptorConfig.addInterceptors;intercept addPaths:{},excludePaths:{}"
             , intercept.getAddPaths(), intercept.getExcludePaths());
         // 功能(菜单)权限拦截器, 兼顾处理了登录拦截功能
-        registry.addInterceptor(intercept)
-                .excludePathPatterns(intercept.getExcludePaths())
-                .addPathPatterns(intercept.getAddPaths())
-                .order(100);
+//        registry.addInterceptor(intercept)
+//                .excludePathPatterns(intercept.getExcludePaths())
+//                .addPathPatterns(intercept.getAddPaths())
+//                .order(100);
         // 上下文信息设置拦截器
         ContextIntercept contextIntercept = new ContextIntercept();
         registry.addInterceptor(contextIntercept)
